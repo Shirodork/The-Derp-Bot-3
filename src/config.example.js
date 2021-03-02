@@ -56,7 +56,7 @@ const config = {
 	// This is just so some commands can be ran in DM channels
 	defaultSettings: {
 		// default settings
-		prefix: 'e!',
+		prefix: '!',
 		Language: 'en-US',
 	},
 	// Custom emojis, just for cosmetic (change these if you wish)

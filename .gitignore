@@ -109,3 +109,4 @@ src/assets/soundclips/*.wav
 .tern-port
 
 node_modules
+depreciated_commands
