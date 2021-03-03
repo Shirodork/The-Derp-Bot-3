@@ -10,7 +10,7 @@ module.exports = class G_start extends Command {
 			aliases: ['gstart', 'g-create'],
 			userPermissions: ['MANAGE_GUILD'],
 			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-			description: 'Start a giveaway',
+			description: 'Start a giveaway. Time Syntax (d, h, m, s) | Example: gstart 1h 1 Discord Nitro',
 			usage: 'g-start <time> <Number of winners> <prize>',
 			cooldown: 30000,
 		});

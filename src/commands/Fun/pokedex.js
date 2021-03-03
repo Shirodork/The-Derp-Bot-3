@@ -16,6 +16,7 @@ module.exports = class Pokedex extends Command {
 		super(bot, {
 			name: 'pokedex',
 			dirname: __dirname,
+			aliases: ['poke'],
 			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
 			description: 'Get information on a pokemon.',
 			usage: 'pokedex <pokemon or pokemon number>',
@@ -26,46 +27,51 @@ module.exports = class Pokedex extends Command {
 	// Command Function
 	async run(bot, message, args, settings) {
 		
-		// Grab the pokemon arg
-		const pokemon = args.join('-');
-		
+		// Handler: Modifies multi-worded names to conform to API Requirements
+		var pokemon = args.join(' ').toLowerCase()
+		pokemon = pokemon.replace(/[^A-Z0-9]+/ig, "-")
+		pokemon = pokemon.replace(/\s/g, '');
+		console.log(pokemon)
+
+
 		// Pokedex Image
 		var pokeDex = 'https://i.imgur.com/bG67Lcv.png'
 
-		// Error catcher
+		// Argument Check
 		if (!pokemon) {
 			if (message.deletable) message.delete();	// Delete Message
 			return message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));	// Return Error
 		}
 
-		// Search for pokemon
-		const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${args.join('-')}`)
-			.then((info) => info.json())
-			.catch((err) => {
-				// No Pokemon/Error
-				if (message.deletable) message.delete();															// Delete User Message
-				bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);						// Log Error in console
-				return message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));	// Error Message
-			});
+		// This PokeAPI JSON Holds Pokemon Information
+		const poke1 = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon}`)
+		.then(res => res.json()
+		.catch((err) => {
+			// No Pokemon/Error
+			if (message.deletable) message.delete();																// Delete User Message
+			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);							// Log Error in console
+			return message.error(settings.Language, 'FUN/MISSING_POKEMON').then(m => m.delete({ timeout: 5000 }));	// Error Message
+		}));
+		
+		// This PokeAPI JSON Holds Species Type Information
+		const poke2 = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${poke1.id}`).then(res => res.json());
 
-		// Search for Species Type
-		const res1 = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${res.game_indices.id}`)
-			.then((info) => info.json())
-			.catch((err) => {
-				// No Pokemon/Error
-				if (message.deletable) message.delete();															// Delete User Message
-				bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);						// Log Error in console
-				return message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));	// Error Message
-			});
+
+			if (!Object.keys(poke1).length || !Object.keys(poke2).length) {
+				r.delete();
+				message.error(settings.Language, 'SEARCHER/UNKNOWN_USER').then(m => m.delete({ timeout: 10000 }));
+				return;
+			}
+		
 
 		// Send response to channel
 		const embed = new MessageEmbed()
-			.setAuthor(`${res.species.name} #${res.game_indices.id}`, `${pokeDex}`)
-			.setDescription(`**Type:** ${res.types.type.name} 
-				\n**Egg Group:** ${res1.egg_groups.name}
-				\n**Description:**: ${res1.flavor_text_entries.flavor_text}`)
-			.setThumbnail(`${res.sprites.front_default}`)
-			.setFooter(`First Appearance: ${res2.generation.name} | Generated With PokeAPI`, `https://pokeapi.co/`);
+			.setAuthor(`${poke1.species.name} #${poke1.id}`, `${pokeDex}`)
+			.setDescription(`**Type:** ${poke1.types[0].type.name} 
+				\n**Description:**: ${poke2.flavor_text_entries[poke2.flavor_text_entries.length-2].flavor_text}`)
+			.setThumbnail(`${poke1.sprites.front_default}`)
+			.setFooter(`First Appearance: ${poke2.generation.name} | Generated With PokeAPI`, `https://pokeapi.co/`, message.guild.iconURL);
 		message.channel.send(embed);
+		console.log(poke1)
 	}
 };
