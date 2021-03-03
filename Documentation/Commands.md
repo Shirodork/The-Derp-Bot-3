@@ -1,21 +1,23 @@
 # Command list
 Please not the following syntax arguments:
-><> represents a required argument
-[] = optional arguments. Commands can function wtihout this argument
+><> represents a required argument || [] = optional arguments
+
+>Default Prefix is '!'. Can be changed in Config. Be sure to update MongoDB 
 
 ## Fun
-| Command  | Description                        | Proper Syntax               |
-|----------|------------------------------------|-----------------------------|
-| Advice   | Get some random advice.            | e!advice                    |
-| Fact     | Receive a random fact.             | e!fact                      |
-| Flip     | Flip a coin.                       | e!flip                      |
-| Meme     | Sends a random meme.               | e!meme                      |
-| Ping     | Pong!                              | e!ping                      |
-| Pokemon  | Get information on a pokemon.      | e!pokemon \<pokemon\>         |
-| Random   | Replies with a random number       | e!random \<LowNum\> \<HighNum\> |
-| Reminder | Set a reminder.                    | e!reminder \<time\> <info\>    |
-| RPS      | Play Rock Paper Scissor.           | e!rps \<option\>              |
-| Urban    | Get the urban dictionary of a word | e!urban \<phrase\>            |
+| Command  | Description                                                | Proper Syntax                    |
+|----------|------------------------------------------------------------|----------------------------------|
+| Advice   | Displays a random piece of advice. (API Driven)            | !advice                          |
+| Fact     | Supplies a random fact from a JSON repository              | !fact                            |
+| Flip     | Flip a coin! Something rare might happen!                  | !flip                            |
+| Meme     | Grabs a random meme (API Driven)                           | !meme                            |
+| Ping     | Pong! Grabs local bot and discord API latency information  | !ping                            |
+| Pokedex  | Provides detailed information on a requested pokemon       | !pokedex \<pokemon\>             |
+| Random   | Random number generator. Input must be above zero!         | !random \<LowNum\> \<HighNum\>   |
+| Reminder | Set a timed reminder. Bot will DM you when the timer is up | !reminder \<time\> \<info\>      |
+| RPS      | Rock Paper Scissors!                                       | !rps \<option\>                  |
+| Screenshot| Take a screenshop of a website. Must have Chrome installed| !screenshot \<website>           |
+| Urban    | Look up the Urban Dictionary definition of a word          | e!urban \<phrase\>               |
 
 ## Guild
 | Command     | Description                               | Proper Syntax                       |
@@ -124,3 +126,10 @@ Please not the following syntax arguments:
 | Steam     | Get information on a Steam account.          | e!steam \<user\>                                   |
 | Twitch    | Get information on a twitch account.         | e!twitch \<user\>                                  |
 | Weather   | Look up the weather in a certain area.       | e!weather \<location\>                             |
+
+
+## Command Information
+
+The following section explain the commands in detail and provides example and syntax informatino
+### Fun
+####

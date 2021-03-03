@@ -8,7 +8,7 @@ module.exports = class Reminder extends Command {
 		super(bot, {
 			name: 'reminder',
 			dirname: __dirname,
-			aliases: ['remindme'],
+			aliases: ['remindme', 'remind', 'timer'],
 			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
 			description: 'Set a reminder.',
 			usage: 'reminder <time> <information>',
