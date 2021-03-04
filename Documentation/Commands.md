@@ -11,6 +11,7 @@ Please not the following syntax arguments:
 | Fact     | Supplies a random fact from a JSON repository              | !fact                            |
 | Flip     | Flip a coin! Something rare might happen!                  | !flip                            |
 | Meme     | Grabs a random meme (API Driven)                           | !meme                            |
+| Person   | Generates a random person (API Driven)                     | !person                          |
 | Ping     | Pong! Grabs local bot and discord API latency information  | !ping                            |
 | Pokedex  | Provides detailed information on a requested pokemon       | !pokedex \<pokemon\>             |
 | Random   | Random number generator. Input must be above zero!         | !random \<LowNum\> \<HighNum\>   |
