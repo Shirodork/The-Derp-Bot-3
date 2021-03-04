@@ -1,7 +1,7 @@
 // This contains language files for the commands
 const languageData = {
 	FACT_TITLE: 'Random Fact:',
-	FLIP_CHOICE: (choice) => `${['Head', 'Tails'][choice]}`,
+	FLIP_CHOICE: (choice) => `${['Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Wow! It landed on it\'s side!'][choice]}`,
 	MEME_TITLE: 'From',
 	MEME_FOOTER: 'Provided by',
 	MISSING_POKEMON: 'That pokemon doesn\'t exist',

@@ -16,7 +16,7 @@ module.exports = class Pokedex extends Command {
 		super(bot, {
 			name: 'pokedex',
 			dirname: __dirname,
-			aliases: ['poke'],
+			aliases: ['poke', 'dex'],
 			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
 			description: 'Get information on a pokemon.',
 			usage: 'pokedex <pokemon or pokemon number>',
