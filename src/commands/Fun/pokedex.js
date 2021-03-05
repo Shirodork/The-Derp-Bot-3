@@ -90,7 +90,7 @@ module.exports = class Pokedex extends Command {
 					bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);							// Log Error in console
 					return message.error(settings.Language, 'FUN/MISSING_POKEMON').then(m => m.delete({ timeout: 5000 }));	// Error Message
 				}));
-
+				console.log(poke1)
 		// This PokeAPI JSON Holds Species Type Information
 		const poke2 = await fetch(api.species + poke1.id).then(res => res.json());
 
