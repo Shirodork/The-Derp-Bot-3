@@ -8,7 +8,8 @@
 const fs = require('fs'),								// NodeJS File System Heper
  { MessageEmbed } = require('discord.js'),
 	Command = require('../../structures/Command.js'),	// Command Handler
-	fetch = require('node-fetch')								// HTTP Request
+	fetch = require('node-fetch');								// HTTP Request
+const { random } = require('urban-dictionary');
 
 
 // Command Class Createion
@@ -17,12 +18,13 @@ module.exports = class heavenorhell1 extends Command {
 	// Command Construct
 	constructor(bot) {
 		super(bot, {
-			name: 'heavenorhell1',
+			name: 'heavenorhell',
+			nsfw: true,
 			dirname: __dirname,
-			aliases: ['hh1'],
+			aliases: ['hh'],
 			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
-			description: 'Receive a random fact.',
-			usage: 'fact',
+			description: 'Reddit 50/50, the command! Test your luck. **EXTREME DEGENERACY WARNING**',
+			usage: '!heavenorhell',
 			cooldown: 1000,
 		});
 	}
@@ -170,7 +172,7 @@ module.exports = class heavenorhell1 extends Command {
 			'funny',
 			'legoporn',
 			'pics',
-			'FeralPokePorn',
+			//'FeralPokePorn',
 			'nextfuckinglevel',
 			'PokePorn',
 			'blessedimages',
@@ -178,7 +180,7 @@ module.exports = class heavenorhell1 extends Command {
 			'Awwducational',
 			'hentai',
 			'Gifs',
-			'BaguettesInButts',
+			//'BaguettesInButts',
 			'Minecraft',
 			'Shemales',
 			'HorseMask',
@@ -215,7 +217,7 @@ module.exports = class heavenorhell1 extends Command {
 		var botResponse = responses[Math.floor(Math.random() * responses.length)];
 
 
-		const eww = await fetch(`https://www.reddit.com/r/${subreddit}.json?sort=top&t=week`)
+		const data = await fetch(`https://www.reddit.com/r/${subreddit}.json?sort=top&t=week`)
 			.then(res => res.json()
 				.catch((err) => {
 					// No Pokemon/Error
@@ -224,18 +226,18 @@ module.exports = class heavenorhell1 extends Command {
 					return message.error(settings.Language, 'FUN/MISSING_POKEMON').then(m => m.delete({ timeout: 5000 }));	// Error Message
 				}));
 
-		console.log(eww)
-		console.log(eww.data.num_comments)
+		const post = data.data.children
+
+		const randomnumber = Math.floor(Math.random() * post.length)
 		// New Embed
 		const embed = new MessageEmbed()
-			.setTitle(botResponse)
-			.setDescription("Posted by: " + body.data.author)
+			.setTitle(post[randomnumber].data.title)
+			.setDescription("Posted by: " + post[randomnumber].data.author)
 			.setColor(0x00A2E8)
 			.setFooter(`Memes and Images provided by r/${subreddit}`)
-			.setURL(body.data.url)
-			.setImage(body.data.url)
-			.addField("Other info:", "Up votes: " + body.data.ups + " / Comments: " + body.data.num_comments + "\n**If no image loads, click the title to check the source. The image may be unsupported or non-existant with the original post**")
-
+			.setURL(`https://www.reddit.com${post[randomnumber].data.permalink}`)
+			.setImage(post[randomnumber].data.url)
+			.addField("Other info:", "Up votes: " + post[randomnumber].data.ups + " / Comments: " + post[randomnumber].data.num_comments + "\n**If no image loads, click the title to check the source. The image may be unsupported or non-existant with the original post.**" + `\n[View on Reddit Instead!](https://www.reddit.com${post[randomnumber].data.permalink})`)
 
 
 		// Send Message

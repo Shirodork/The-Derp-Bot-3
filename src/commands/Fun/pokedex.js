@@ -34,8 +34,21 @@ const bulbaMap = {
 	'tapu-lele': 'tapu_Lele',
 	'tapu-bulu': 'tapu_Bulu',
 	'tapu-fini': 'tapu_Fini',
+	'492' : 'shaymin',
+	'487' : 'giratina',
 }
 
+const pokeMap = {
+	'giratina' : 'giratina-origin',
+	'shaymin' : 'shaymin-land',
+}
+
+const poke2Map = {
+	'giratina-origin' : '487',
+	'giratina-altered' : '487',
+	'shaymin-land' : '492',
+	'shaymin-sky' : '492',
+}
 // Create Command Class
 module.exports = class Pokedex extends Command {
 	// Command Constructor
@@ -80,6 +93,8 @@ module.exports = class Pokedex extends Command {
 			if (message.deletable) message.delete();	// Delete Message
 			return message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));	// Return Error
 		}
+		
+		pokemon = pokeMap[pokemon] || pokemon
 
 		// This PokeAPI JSON Holds Pokemon Information
 		const poke1 = await fetch(api.pokemon + pokemon)
@@ -91,8 +106,11 @@ module.exports = class Pokedex extends Command {
 					return message.error(settings.Language, 'FUN/MISSING_POKEMON').then(m => m.delete({ timeout: 5000 }));	// Error Message
 				}));
 				console.log(poke1)
-		// This PokeAPI JSON Holds Species Type Information
-		const poke2 = await fetch(api.species + poke1.id).then(res => res.json());
+		
+				pokemon = poke2Map[pokemon] || pokemon
+
+				// This PokeAPI JSON Holds Species Type Information
+		const poke2 = await fetch(api.species + pokemon).then(res => res.json());
 
 		// Grab Bulbapedia Info Page
 		pokemon = bulbaMap[pokemon] || pokemon
@@ -146,7 +164,7 @@ module.exports = class Pokedex extends Command {
 			.addField('\u200b', '```asciidoc\nSpeed  :: ' + stats.speed + '\nSp.Atk :: ' + stats['special-attack'] + '\nSp.Def :: ' + stats['special-defense'] + '\n```', true)
 
 		message.channel.send({ embed })
-			.then(m => poke1.id === 149 ? m.react('\u{1f499}') : '')
+			//.then(m => poke1.id === 149 ? m.react('\u{1f499}') : '')
 	}
 };
 

@@ -10,7 +10,7 @@ module.exports = async (bot) => {
 	const clientSecret = bot.config.api_keys.spotify.secret;
 	bot.manager = new Manager({
 		nodes: [
-			{ host: 'localhost', port: 2333, password: 'youshallnotpass' },
+			{ host: 'localhost', port: 5000, password: 'youshallnotpass' },
 		],
 		plugins: [
 			// Allow spotify songs/playlists to be played
