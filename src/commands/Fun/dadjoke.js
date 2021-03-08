@@ -19,20 +19,13 @@ module.exports = class DadJoke extends Command {
 	// Run command
 	async run(bot, message, args, settings) {
 
-        let options = {
-            headers: {
-                'User-Agent': 'TheDerpBot3.0'
-            },
-            json: true
-        };
-
+        // Fetch Dad Joke and convert to JSON
         const dadjoke = await fetch(dadAPI)
 			.then(res => res.json()
 				.catch((err) => {
-					// No Pokemon/Error
 					if (message.deletable) message.delete();																// Delete User Message
 					bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);							// Log Error in console
-					return message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));	// Error Message
+					return message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));	    // Error Message
 				}));
 
 
@@ -40,7 +33,7 @@ module.exports = class DadJoke extends Command {
 		const embed = new MessageEmbed()
 			.setTitle(message.translate(settings.Language, 'FUN/DAD_TITLE'))	// Title
 			.setColor('RANDOM')													// Color
-			.setDescription(dadjoke.joke)									// Grab Chosen Fact
+			.setDescription(dadjoke.joke)									    // Grab Chosen Fact
 
 		// Send Message
 		message.channel.send(embed);
