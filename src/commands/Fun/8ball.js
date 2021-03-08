@@ -1,6 +1,7 @@
 // Dependencies
 const Command = require('../../structures/Command.js');
 
+// Command Export
 module.exports = class EightBall extends Command {
 	constructor(bot) {
 		super(bot, {
@@ -21,6 +22,7 @@ module.exports = class EightBall extends Command {
 			return message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));	// Return Error
         }
         
+        // 8 Ball Responses (TO BE MOVED TO LANGUAGE FILE)
         var responses =
         [
           'Maybe.',
