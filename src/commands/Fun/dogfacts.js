@@ -1,4 +1,4 @@
-const dogFacts = require('../Assets/dogfacts.json');
+const dogFacts = require('../../assets/json/dogfacts.json');
 const Command = require('../../structures/Command.js');
 
 module.exports = class DogFacts extends Command {

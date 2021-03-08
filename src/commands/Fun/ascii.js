@@ -28,7 +28,7 @@ module.exports = class Ascii extends Command {
         ascii.font(args.join(' '), 'Doom', function (rendered) {
 
             // Remove white spaces to the right of the string
-            rendered = rendered.trimRight();
+            rendered = rendered.trimEnd();
 
             // Checks if string is above a certain limit
             if (rendered.length > 2000) return message.channel.send('Error: Message too long!');
