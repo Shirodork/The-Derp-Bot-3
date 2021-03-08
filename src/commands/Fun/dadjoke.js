@@ -19,19 +19,8 @@ module.exports = class DadJoke extends Command {
 	// Run command
 	async run(bot, message, args, settings) {
 
-<<<<<<< Updated upstream
         // Fetch Dad Joke and convert to JSON
         const dadjoke = await fetch(dadAPI)
-=======
-        let options = {
-            headers: {
-                'User-Agent': 'TheDerpBot3.0'
-            },
-            json: true
-        };
-
-        const dadjoke = await fetch(dadAPI, options)
->>>>>>> Stashed changes
 			.then(res => res.json()
 				.catch((err) => {
 					if (message.deletable) message.delete();																// Delete User Message
@@ -44,11 +33,7 @@ module.exports = class DadJoke extends Command {
 		const embed = new MessageEmbed()
 			.setTitle(message.translate(settings.Language, 'FUN/DAD_TITLE'))	// Title
 			.setColor('RANDOM')													// Color
-<<<<<<< Updated upstream
-			.setDescription(dadjoke.joke)									    // Grab Chosen Fact
-=======
 			.setDescription(dadjoke.attachments[0].text)									// Grab Chosen Fact
->>>>>>> Stashed changes
 
 		// Send Message
 		message.channel.send(embed);
