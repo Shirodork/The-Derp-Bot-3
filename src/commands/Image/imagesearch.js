@@ -3,15 +3,15 @@ const { image_search } = require('duckduckgo-images-api'),
 	{ MessageEmbed } = require('discord.js'),
 	Command = require('../../structures/Command.js');
 
-module.exports = class Image extends Command {
+module.exports = class ImageSearch extends Command {
 	constructor(bot) {
 		super(bot, {
-			name: 'img',
+			name: 'imagesearch',
 			dirname: __dirname,
-			aliases: ['image'],
+			aliases: ['img'],
 			botPermissions: [ 'SEND_MESSAGES', 'EMBED_LINKS'],
 			description: 'Finds an image based on the topic.',
-			usage: 'image <topic>',
+			usage: 'imagesearch <topic>',
 			cooldown: 2000,
 		});
 	}

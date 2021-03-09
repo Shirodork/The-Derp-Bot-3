@@ -6,7 +6,8 @@
 
 // Dependencies
 const fetch = require('node-fetch'),					// HTTP Fetcher
-	Command = require('../../structures/Command.js');	// Command Handler
+	Command = require('../../structures/Command.js'),	// Command Handler
+	{ MessageEmbed } = require('discord.js');
 
 	// Class creation and help export
 module.exports = class Advice extends Command {
@@ -32,8 +33,8 @@ module.exports = class Advice extends Command {
 			const embed = new MessageEmbed()
 			.setAuthor(`My advice to you, ${message.author.tag}:`)
 			.setColor('RANDOM')
-			.setThumbnail(bot.user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }))
-			.addField(adviceJSON.slip.advice)
+			.setThumbnail(bot.user.displayAvatarURL({ format: 'png', dynamic: true, size: 256 }))
+			.setDescription(`"${adviceJSON.slip.advice}"`)
 			.setTimestamp()
 			.setFooter(message.translate(settings.Language, 'GUILD/INFO_FOOTER', message.author.tag));
 

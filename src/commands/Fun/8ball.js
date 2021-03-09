@@ -1,5 +1,6 @@
 // Dependencies
-const Command = require('../../structures/Command.js');
+const Command = require('../../structures/Command.js'),
+    { MessageEmbed } = require('discord.js')
 
 // Command Export
 module.exports = class EightBall extends Command {

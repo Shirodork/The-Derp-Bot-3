@@ -41,7 +41,7 @@ module.exports = class Screenshot extends Command {
 		// screenshot function
 		async function screenshotWebsite(url) {
 			try {
-				const browser = await Puppeteer.launch({ executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/Chrome.exe' });
+				const browser = await Puppeteer.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/Chrome.exe' });
 				const page = await browser.newPage();
 				await page.setViewport({
 					width: 1280,
