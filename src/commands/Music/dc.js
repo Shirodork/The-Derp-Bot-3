@@ -6,7 +6,7 @@ module.exports = class Disconnect extends Command {
 		super(bot, {
 			name: 'dc',
 			dirname: __dirname,
-			aliases: ['stop', 'disconnect'],
+			aliases: ['stop', 'disconnect', 'leave', 'quit'],
 			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
 			description: 'Disconnects the bot from the voice channel.',
 			usage: 'dc',
