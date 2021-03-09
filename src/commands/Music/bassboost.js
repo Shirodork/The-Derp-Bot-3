@@ -23,9 +23,17 @@ module.exports = class BassBoost extends Command {
 		// Check that user is in the same voice channel
 		if (message.member.voice.channel.id !== player.voiceChannel) return message.error(settings.Language, 'MUSIC/NOT_VOICE').then(m => m.delete({ timeout: 5000 }));
 
-		// Change bassboost value
-		player.setBassboost(!player.bassboost);
-		message.channel.send(`Bassboost is ${!player.bassboost}`);
+		if (player.bassboost === true) {
+			// Change Bassboost value
+			player.setBassboost(!player.bassboost)
+			message.channel.send(`Bassboost Effect has been set to: ${player.bassboost}`);
+
+		} else if (player.bassboost === false) {
+			// Change Bassboost value
+			player.setBassboost(!player.bassboost);
+			player.bassboost = true		// TODO: Code does not auto-grab updated value. Need to grab updated value
+			message.channel.send(`Bassboost Effect has been set to: ${player.bassboost}`);
+		}
 	};
 
 };

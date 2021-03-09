@@ -90,7 +90,7 @@ module.exports = Structure.extend('Player', Player => {
 				this.vaporwave = false;
 				this.setVaporwave(false);
 				this.setNightcore(false);
-				this.setEqualizer(1, 0.85);
+				this.setEqualizer(1, 2);
 			} else {
 				this.clearEffects();
 			}

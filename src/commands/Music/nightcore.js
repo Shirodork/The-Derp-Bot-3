@@ -23,9 +23,18 @@ module.exports = class NightCore extends Command {
 		// Check that user is in the same voice channel
 		if (message.member.voice.channel.id !== player.voiceChannel) return message.error(settings.Language, 'MUSIC/NOT_VOICE').then(m => m.delete({ timeout: 5000 }));
 
-		// Change Nightcore value
-		player.setNightcore(!player.nightcore);
-		message.channel.send(`Nightcore is ${!player.nightcore}`);
+		if (player.nightcore === true) {
+			console.log('should be false')
+			// Change Nightcore value
+			player.setNightcore(!player.nightcore)
+			message.channel.send(`Nightcore Effect has been set to: ${player.nightcore}`);
+
+		} else if (player.nightcore === false) {
+			// Change Nightcore value
+			player.setNightcore(!player.nightcore);
+			player.nightcore = true		// TODO: Code does not auto-grab updated value. Need to grab updated value
+			message.channel.send(`Nightcore Effect has been set to: ${player.nightcore}`);
+		}
 	}
 
 };
