@@ -1,6 +1,7 @@
 # The Derp Bot 3
 
 > This bot is an update from The Derp Bot 2.0. Currently undergoing a massive code overhaul. More To Come.
+> Note that documentation on this GiHub is still undergoing heavy updates. Please bear with me!
 
 ## Description
 This is a multipurpose discord bot. The bot runs on Javascript and utilizes Node.js along with [Discord.js](https://discord.js.org). The bot also utilizes the MongoDB database system. Currently in development!
