@@ -127,10 +127,3 @@ Please not the following syntax arguments:
 | Steam     | Get information on a Steam account.          | e!steam \<user\>                                   |
 | Twitch    | Get information on a twitch account.         | e!twitch \<user\>                                  |
 | Weather   | Look up the weather in a certain area.       | e!weather \<location\>                             |
-
-
-## Command Information
-
-The following section explain the commands in detail and provides example and syntax informatino
-### Fun
-####
