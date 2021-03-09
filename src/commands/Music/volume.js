@@ -32,8 +32,8 @@ module.exports = class Back extends Command {
 			return message.channel.send(embed);
 		}
 
-		// make sure the number was between 0 and 1000
-		if (Number(args[0]) <= 0 || Number(args[0]) > 1000) {
+		// make sure the number was between 0 and 100
+		if (Number(args[0]) <= 0 || Number(args[0]) > 100) {
 			return message.error(settings.Language, 'MUSIC/TOO_HIGH');
 		}
 
