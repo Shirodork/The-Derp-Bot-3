@@ -7,8 +7,8 @@ const { Client, Collection } = require('discord.js'),
 	{ KSoftClient } = require('@ksoft/api'),
 	path = require('path');
 
-// Creates Egglord class
-module.exports = class Egglord extends Client {
+// Creates Derpbot class
+module.exports = class Derpbot extends Client {
 	constructor(options) {
 		super(options);
 		// for console logging

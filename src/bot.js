@@ -1,5 +1,5 @@
 // Dependencies
-const Client = require('./base/Egglord.js');
+const Client = require('./base/DerpBot.js');
 require('./structures');
 const bot = new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'], fetchAllMembers: true, ws: { intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_BANS', 'GUILD_EMOJIS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES', 'GUILD_PRESENCES', 'GUILD_VOICE_STATES'] } });
 const { promisify } = require('util');
