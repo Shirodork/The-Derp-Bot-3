@@ -43,5 +43,3 @@ The requirement for the bot include the following list:
 
 Be sure to check the [Wiki](https://github.com/Shirodork/The-Derp-Bot-3/wiki) page for more information on the bot!
 
-The framework for the bot is based upon [Spiderjockey02's Discord-Bot respository](https://github.com/Spiderjockey02/Discord-Bot)
-
