@@ -8,7 +8,7 @@ module.exports = class NowPlaying extends Command {
 		super(bot, {
 			name: 'np',
 			dirname: __dirname,
-			aliases: ['song'],
+			aliases: ['song', 'nowplaying'],
 			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
 			description: 'Shows the current song playing.',
 			usage: 'np',

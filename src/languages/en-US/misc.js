@@ -1,5 +1,6 @@
 const languageData = {
 	ERROR_MESSAGE: 'An error occured when running this command, please try again or contact support.',
+	ERROR_URL: ' An error has occured. Please be sure the URL is fully typed out (i.e. https://www.google.com/)',
 	INCORRECT_FORMAT: (commandExample) => `Please use the format: \`${commandExample}\`.`,
 	MISSING_PERMISSION: (permission) => `I am missing the permission: \`${permission}\`.`,
 	USER_PERMISSION: (permission) => `You are missing the permission: \`${permission}\`.`,

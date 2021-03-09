@@ -1,25 +1,31 @@
-module.exports.run = async (bot, message, args, settings) => {
-	// Check that a song is being played
-	const player = bot.manager.players.get(message.guild.id);
-	if (!player) return message.error(settings.Language, 'MUSIC/NO_QUEUE').then(m => m.delete({ timeout: 5000 }));
+// Dependencies
+const Command = require('../../structures/Command.js');
 
-	// Check that user is in the same voice channel
-	if (message.member.voice.channel.id !== player.voiceChannel) return message.error(settings.Language, 'MUSIC/NOT_VOICE').then(m => m.delete({ timeout: 5000 }));
+module.exports = class BassBoost extends Command {
+	constructor(bot) {
+		super(bot, {
+			name: 'bassboost',
+			dirname: __dirname,
+			aliases: ['bb'],
+			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'CONNECT', 'SPEAK'],
+			description: 'Sets the player\'s bass boost setting.',
+			usage: 'bassbost',
+			cooldown: 3000,
+		});
+	}
 
-	// Change bassboost value
-	player.setBassboost(!player.bassboost);
-	message.channel.send(`Bassboost is ${!player.bassboost}`);
-};
+	// Run command
+	async run(bot, message, args, settings) {
+		// Check that a song is being played
+		const player = bot.manager.players.get(message.guild.id);
+		if (!player) return message.error(settings.Language, 'MUSIC/NO_QUEUE').then(m => m.delete({ timeout: 5000 }));
 
-module.exports.config = {
-	command: 'bassboost',
-	aliases: ['bb'],
-	permissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'CONNECT', 'SPEAK'],
-};
+		// Check that user is in the same voice channel
+		if (message.member.voice.channel.id !== player.voiceChannel) return message.error(settings.Language, 'MUSIC/NOT_VOICE').then(m => m.delete({ timeout: 5000 }));
 
-module.exports.help = {
-	name: 'Bassboost',
-	category: 'Music',
-	description: 'Sets the player\'s bass boost setting.',
-	usage: '${PREFIX}bassboost',
+		// Change bassboost value
+		player.setBassboost(!player.bassboost);
+		message.channel.send(`Bassboost is ${!player.bassboost}`);
+	};
+
 };

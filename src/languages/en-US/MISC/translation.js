@@ -14,7 +14,7 @@ const languageData = {
 	STATUS_CLIENT: 'Client API:',
 	STATUS_MONGO: 'MongoDB:',
 	SUPPORT_TITLE: (username) => `${username} support`,
-	SUPPORT_DESC: (websites) => `**Our Server:**  [Support Server](${websites[0]})\n **Our website:**  [Website](${websites[1]})\n **Git Repo:** [Website](https://github.com/Spiderjockey02/Discord-Bot)`,
+	SUPPORT_DESC: (websites) => `**Our Server:**  [Support Server](${websites[0]})\n **Our website:**  [Website](${websites[1]})\n **Git Repo:** [Website](https://github.com/Shirodork/The-Derp-Bot-3)`,
 };
 
 const translate = (key, args) => {
