@@ -29,6 +29,7 @@
     "canvacord": "^5.0.8",
     "chalk": "^4.1.0",
     "cheerio": "^1.0.0-rc.5",
+    "cli": "^1.0.1",
     "dateformat": "^4.5.1",
     "deepmerge": "^4.2.2",
     "discord.js": "^12.5.1",
