@@ -32,10 +32,15 @@ This bot features a variety of commands. Please see the Wiki Page for more infor
 [Full commands list](https://github.com/Shirodork/The-Derp-Bot-3/blob/main/Documentation/Commands.md)
 
 ### Requirements
-*     **Discord.JS**
-*     **Node JS v14 or later**
-*     **NPM v6 or later**
-*     **MongoDB**
+
+The requirement for the bot include the following list:
+
+-    **Discord.JS**
+-    **Node JS v14 or later**
+-    **NPM v6 or later**
+-    **MongoDB**
+
+Be sure to check the [Wiki](https://github.com/Shirodork/The-Derp-Bot-3/wiki) page for more information on the bot!
 
 The framework for the bot is based upon [Spiderjockey02's Discord-Bot respository](https://github.com/Spiderjockey02/Discord-Bot)
 
