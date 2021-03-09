@@ -16,6 +16,8 @@ module.exports = class Meme extends Command {
 
 	// Run command
 	async run(bot, message, args, settings) {
+
+		return message.channel.send('Currently Awaiting KSOFT API Appoval! Command temporarily disabled.')
 		// Retrieve a random meme
 		const meme = await bot.Ksoft.images.meme();
 

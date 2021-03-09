@@ -1,5 +1,6 @@
 // This contains language files for the commands
 const languageData = {
+	CAT_TITLE: 'Random Cat Fact:',
 	DAD_TITLE: 'Random Dad Joke:',
 	DOG_TITLE: 'Random Dog Fact:',
 	EIGHT_TITLE: 'The Eight Ball Says:',
