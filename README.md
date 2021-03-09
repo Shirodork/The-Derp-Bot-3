@@ -3,7 +3,7 @@
 > This bot is an update from The Derp Bot 2.0. Currently undergoing a massive code overhaul. More To Come.
 
 ## Description
-This is a multipurpose discord bot. The bot runs on Javascript and utilizes Node.js along with [Discord.js](https://discord.js.org). The bot is currently undergoing heavy re-coding and maintenance. 
+This is a multipurpose discord bot. The bot runs on Javascript and utilizes Node.js along with [Discord.js](https://discord.js.org). The bot also utilizes the MongoDB database system. Currently in development!
 
 ## Specification and Features
 
@@ -29,5 +29,13 @@ This bot features a variety of commands. Please see the Wiki Page for more infor
 *    **Level**: Leveling System
 *    **Misc**: Bot and server related misc commands
 
-[Full commands list]()
+[Full commands list](https://github.com/Shirodork/The-Derp-Bot-3/blob/main/Documentation/Commands.md)
+
+### Requirements
+*     **Discord.JS**
+*     **Node JS v14 or later**
+*     **NPM v6 or later**
+*     **MongoDB**
+
+The framework for the bot is based upon [Spiderjockey02's Discord-Bot respository](https://github.com/Spiderjockey02/Discord-Bot)
 
