@@ -3,6 +3,7 @@ const { MessageEmbed, version } = require('discord.js'),
 	moment = require('moment'),
 	Command = require('../../structures/Command.js');
 
+// Command Exporter
 module.exports = class About extends Command {
 	constructor(bot) {
 		super(bot, {

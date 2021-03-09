@@ -1,5 +1,8 @@
 // This contains language files for the commands
 const languageData = {
+	DAD_TITLE: 'Random Dad Joke:',
+	DOG_TITLE: 'Random Dog Fact:',
+	EIGHT_TITLE: 'The Eight Ball Says:',
 	FACT_TITLE: 'Random Fact:',
 	FLIP_CHOICE: (choice) => `${['Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Wow! It landed on it\'s side!'][choice]}`,
 	MEME_TITLE: 'From',

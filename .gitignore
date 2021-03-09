@@ -110,3 +110,6 @@ src/assets/soundclips/*.wav
 
 node_modules
 depreciated_commands
+src/Lavalink/runLavalink.bat
+src/Lavalink/application.conf
+src/Lavalink/andesite.jar
