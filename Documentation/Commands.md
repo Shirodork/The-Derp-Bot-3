@@ -4,7 +4,7 @@ Please not the following syntax arguments:
 
 >Default Prefix is '!'. Can be changed in Config. Be sure to update MongoDB 
 
-## Fun
+## [Fun](https://github.com/Shirodork/The-Derp-Bot-3/blob/main/Documentation/FunCommandsFull.md)
 | Command  | Description                                                | Proper Syntax                    |
 |----------|------------------------------------------------------------|----------------------------------|
 | Advice   | Displays a random piece of advice. (API Driven)            | !advice                          |
