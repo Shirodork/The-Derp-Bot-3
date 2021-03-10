@@ -12,15 +12,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Spiderjockey02/Discord-Bot.git"
+    "url": "git+https://github.com/Shirodork/The-Derp-Bot-3.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Spiderjockey02/Discord-Bot/issues"
+    "url": "https://github.com/Shirodork/The-Derp-Bot-3/issues"
   },
-  "homepage": "https://github.com/Spiderjockey02/Discord-Bot#readme",
+  "homepage": "https://github.com/Shirodork/The-Derp-Bot-3",
   "dependencies": {
     "@discordjs/opus": "^0.4.0",
     "@ksoft/api": "^3.1.9",
