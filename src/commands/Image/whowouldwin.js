@@ -32,10 +32,7 @@ module.exports = class WhoWouldWin extends Command {
 			const embed = new MessageEmbed()
 				.setImage(json.message);
 			msg.delete();
-			const msg1 = await message.channel.send(embed);
-		// Add reactions to message
-		await msg1.react('◀️');
-		await msg1.react('▶️');
+			message.channel.send(embed);
 		} catch(err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
