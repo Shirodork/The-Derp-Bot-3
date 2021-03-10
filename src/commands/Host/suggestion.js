@@ -8,7 +8,7 @@ module.exports = class Suggestion extends Command {
 			name: 'suggestion',
 			ownerOnly: true,
 			dirname: __dirname,
-			botPermissions: [ 'SEND_MESSAGES', 'EMBED_LINKS'],
+			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
 			description: 'Add a suggestion to bot',
 			usage: 'suggestion <title> - <description> - <plugin>',
 			cooldown: 3000,
@@ -17,6 +17,9 @@ module.exports = class Suggestion extends Command {
 
 	// Run command
 	async run(bot, message, args, settings) {
+
+		
+
 		// Make sure a support server has been entered
 		if (bot.config.SupportServer) {
 			const channel = bot.channels.cache.get(bot.config.SupportServer.SuggestionChannel);
@@ -38,9 +41,21 @@ module.exports = class Suggestion extends Command {
 			channel.send(embed).then(async (msg) => {
 				await msg.react('👍');
 				await msg.react('👎');
+				
 			});
+
+			const embed1 = new MessageEmbed()
+			.setAuthor(bot.user.username, bot.user.displayAvatarURL())
+			.setTitle('Suggestion Recieved!')
+			.setDescription(`Your suggestion has been sent to [The Derp Bot Support Server!](https://discord.gg/nJE9swCZXa)`)
+			.setTimestamp()
+			.setFooter(`${bot.user.username} suggestions`, bot.user.displayAvatarURL());
+		message.channel.send(embed1);
+
 		} else {
 			message.channel.send('Please fill out your config SupportServer information.');
 		}
-	}
-};
+
+
+	};
+}
