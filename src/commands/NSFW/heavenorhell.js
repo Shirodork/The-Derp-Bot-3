@@ -5,16 +5,12 @@
  */
 
 // Constant Dependencies
-const fs = require('fs'),								// NodeJS File System Heper
- { MessageEmbed } = require('discord.js'),
+const { MessageEmbed } = require('discord.js'),
 	Command = require('../../structures/Command.js'),	// Command Handler
 	fetch = require('node-fetch');								// HTTP Request
-const { random } = require('urban-dictionary');
-
 
 // Command Class Createion
-module.exports = class heavenorhell1 extends Command {
-
+module.exports = class Heavenorhell extends Command {
 	// Command Construct
 	constructor(bot) {
 		super(bot, {
@@ -32,6 +28,8 @@ module.exports = class heavenorhell1 extends Command {
 	// Run command
 	async run(bot, message, args, settings) {
 
+		try {
+			message.channel.send('does it see this #1')
 		var randomReddit = [
 			'furry',
 			'mildlyinfuriating',
@@ -241,7 +239,10 @@ module.exports = class heavenorhell1 extends Command {
 
 
 		// Send Message
-		message.channel.send(embed);
+		message.channel.send(embed)
+	} catch (err) {
+			console.log(err)
+		}
 	}
 
 
