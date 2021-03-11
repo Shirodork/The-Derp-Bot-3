@@ -26,10 +26,10 @@ module.exports = class SetModeration extends Command {
 		// update moderation plugin
 		try {
 			if (args[0] == 'true') {
-				await message.guild.updateGuild({ ModerationPlugin: true });
+				await message.guild.updateGuild({ ModerationPlugin : true });
 				message.success(settings.Language, 'PLUGINS/MODERATION_SET', args[0]).then(m => m.delete({ timeout:10000 }));
 			} else if (args[0] == 'false') {
-				await message.guild.updateGuild({ ModerationPlugin: false });
+				await message.guild.updateGuild({ ModerationPlugin : false });
 				message.success(settings.Language, 'PLUGINS/MODERATION_SET', args[0]).then(m => m.delete({ timeout:10000 }));
 			} else {
 				return message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));

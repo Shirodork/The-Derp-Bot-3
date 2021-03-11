@@ -26,10 +26,10 @@ module.exports = class SetSearch extends Command {
 		// update search plugin
 		try {
 			if (args[0] == 'true') {
-				await message.guild.updateGuild({ SearchPlugin: true });
+				await message.guild.updateGuild({ Searcher: true });
 				message.success(settings.Language, 'PLUGINS/SEARCH_SET', args[0]).then(m => m.delete({ timeout:10000 }));
 			} else if (args[0] == 'false') {
-				await message.guild.updateGuild({ SearchPlugin: false });
+				await message.guild.updateGuild({ Searcher: false });
 				message.success(settings.Language, 'PLUGINS/SEARCH_SET', args[0]).then(m => m.delete({ timeout:10000 }));
 			} else {
 				return message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
