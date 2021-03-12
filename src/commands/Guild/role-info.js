@@ -1,7 +1,6 @@
 // Dependencies
 const { MessageEmbed } = require('discord.js'),
 	moment = require('moment'),
-	sm = require('string-similarity'),
 	Command = require('../../structures/Command.js');
 
 module.exports = class RoleInfo extends Command {
@@ -21,25 +20,13 @@ module.exports = class RoleInfo extends Command {
 	// Run command
 	async run(bot, message, args, settings) {
 		// Check to see if a role was mentioned
-		let role = message.mentions.roles.first() || message.guild.roles.cache.get(args[0]);
+		const role = message.mentions.roles.first() || message.guild.roles.cache.get(args[0]);
 
 		// Make sure it's a role on the server
 		if (!role) {
-			if (args[0]) {
-				const roles = [];
-				const indexes = [];
-				message.guild.roles.cache.forEach(r => {
-					roles.push(r.name);
-					indexes.push(r.id);
-				});
-				const match = sm.findBestMatch(args.join(' '), roles);
-				const username = match.bestMatch.target;
-				role = message.guild.roles.cache.get(indexes[roles.indexOf(username)]);
-			} else {
-				if (message.deletable) message.delete();
-				message.error(settings.Language, 'MISSING_ROLE').then(m => m.delete({ timeout: 10000 }));
-				return;
-			}
+			if (message.deletable) message.delete();
+			message.error(settings.Language, 'MISSING_ROLE').then(m => m.delete({ timeout: 10000 }));
+			return;
 		}
 
 		// Send information to channel

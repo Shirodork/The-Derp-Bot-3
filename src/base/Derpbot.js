@@ -71,23 +71,17 @@ module.exports = class Derpbot extends Client {
 	// Fetch user ID from discord API
 	async getUser(ID) {
 		try {
-			const user = await this.users.fetch(ID);
+			const user = (this.users.cache.get(ID)) ? this.users.cache.get(ID) : await this.users.fetch(ID);
 			return user;
-		} catch (err) {
-			console.log(err.message);
-			return false;
+		} catch (e) {
+			console.log(e);
 		}
 	}
 
 	// Get a channel in cache
 	async getChannel(id) {
-		try {
-			const channel = await this.channels.cache.get(id);
-			return channel;
-		} catch (e) {
-			console.log(e);
-			return false;
-		}
+		const channel = await this.channels.cache.get(id);
+		return channel;
 	}
 
 	// Set this's status

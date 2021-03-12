@@ -31,17 +31,10 @@ module.exports = class Generate extends Command {
 		} else {
 			// Get image, defaults to author's avatar
 			const file = message.guild.GetImage(message, args, settings.Language);
-
-			// Check if bot has permission to attach files
-			if (!message.channel.permissionsFor(bot.user).has('ATTACH_FILES')) {
-				bot.logger.error(`Missing permission: \`ATTACH_FILES\` in [${message.guild.id}].`);
-				return message.error(settings.Language, 'MISSING_PERMISSION', 'ATTACH_FILES').then(m => m.delete({ timeout: 10000 }));
-			}
-
 			// send 'waiting' message
-			let image, msg;
+			const msg = await message.sendT(settings.Language, 'IMAGE/GENERATING_IMAGE');
+			let image;
 			if (image_1.includes(args[0])) {
-				msg = await message.sendT(settings.Language, 'IMAGE/GENERATING_IMAGE');
 				// get image
 				image = await post(`https://v1.api.amethyste.moe/generate/${args[0]}`, { 'url' : file[0] }, {
 					responseType: 'arraybuffer',
@@ -56,11 +49,6 @@ module.exports = class Generate extends Command {
 					message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
 				});
 			} else if (image_2.includes(args[0])) {
-				if (!file[1]) {
-					msg.delete();
-					return message.error(settings.Language, 'IMAGE/MISSING_ARGS').then(m => m.delete({ timeout: 5000 }));
-				}
-				msg = await message.sendT(settings.Language, 'IMAGE/GENERATING_IMAGE');
 				// get image
 				image = await post(`https://v1.api.amethyste.moe/generate/${args[0]}`, { 'avatar': file[1], 'url' : file[0] }, {
 					responseType: 'arraybuffer',

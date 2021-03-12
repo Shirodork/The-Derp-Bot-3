@@ -104,7 +104,6 @@ module.exports.run = async (config) => {
 		}
 	}
 
-	/* Amethyste currently down
 	// Check Amethyste API
 	if (!config.api_keys.amethyste) {
 		logger.error(`${chalk.red('✗')} Amethyste API key is missing.`);
@@ -122,7 +121,6 @@ module.exports.run = async (config) => {
 			error = false;
 		}
 	}
-	*/
 
 	// Check support server set up
 	if (!config.SupportServer) {

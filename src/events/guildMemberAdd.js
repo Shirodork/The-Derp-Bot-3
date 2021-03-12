@@ -4,9 +4,8 @@ const { MessageEmbed } = require('discord.js');
 module.exports = async (bot, member) => {
 	if (member.user.id == bot.user.id) return;
 
-	// Get server settings / if no settings then return
+	// Get server settings
 	const settings = member.guild.settings;
-	if (Object.keys(settings).length == 0) return;
 
 	// welcome plugin (check for anti-raid plugin too)
 	if (settings.welcomePlugin == true) {

@@ -32,11 +32,11 @@ module.exports = class Fortnite extends Command {
 			if (message.deletable) message.delete();
 			return message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
 		});
-		if (res.size == 0) {
+		if (!Object.keys(res).length) {
 			r.delete();
+			message.error(settings.Language, 'SEARCHER/UNKNOWN_USER').then(m => m.delete({ timeout: 10000 }));
 			return;
 		}
-
 		// Checks to see if a username in instagram database
 		if (!res.graphql.user.username) {
 			r.delete();

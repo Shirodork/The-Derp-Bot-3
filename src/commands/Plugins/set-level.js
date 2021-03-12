@@ -26,10 +26,10 @@ module.exports = class SetLevel extends Command {
 		// update level plugin
 		try {
 			if (args[0] == 'true') {
-				message.guild.updateGuild({ Level: true });
+				message.guild.updateGuild({ LevelPlugin: true });
 				message.success(settings.Language, 'PLUGINS/LEVEL_SET', args[0]).then(m => m.delete({ timeout:10000 }));
 			} else if (args[0] == 'false') {
-				message.guild.updateGuild({ Level: false });
+				message.guild.updateGuild({ LevelPlugin: false });
 				message.success(settings.Language, 'PLUGINS/LEVEL_SET', args[0]).then(m => m.delete({ timeout:10000 }));
 			} else {
 				return message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));

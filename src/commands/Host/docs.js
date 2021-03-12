@@ -19,9 +19,10 @@ module.exports = class Docs extends Command {
 	async run(bot, message, args, settings) {
 		// Get docs information
 		const url = `https://djsdocs.sorta.moe/v2/embed?src=stable&q=${encodeURIComponent(args)}`;
-		get(url).then(({ data }) => {
+		get(url).then((embed) => {
 
 			// Display information (if no error)
+			const { data } = embed;
 			if (data && !data.error) {
 				message.channel.send({ embed: data });
 			} else {

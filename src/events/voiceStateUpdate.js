@@ -6,9 +6,8 @@ module.exports = async (bot, oldState, newState) => {
 	const newMember = newState.guild.member(newState.id);
 	const channel = newState.guild.channels.cache.get(newState.channelID);
 
-	// Get server settings / if no settings then return
+	// Get server settings
 	const settings = newState.guild.settings;
-	if (Object.keys(settings).length == 0) return;
 
 	// Check if event voiceStateUpdate is for logging
 	if (settings.ModLogEvents.includes('VOICESTATEUPDATE') && settings.ModLog) {

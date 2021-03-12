@@ -2,9 +2,8 @@
 const { MessageEmbed } = require('discord.js');
 
 module.exports = async (bot, emoji) => {
-	// Get server settings / if no settings then return
+	// Get server settings
 	const settings = emoji.guild.settings;
-	if (Object.keys(settings).length == 0) return;
 
 	// Check if event emojiCreate is for logging
 	if (settings.ModLogEvents.includes('EMOJICREATE') && settings.ModLog) {

@@ -1,7 +1,6 @@
 // Dependencies
-const { Globalban } = require('../modules/database/models'),
-	{ MessageEmbed, Collection } = require('discord.js'),
-	moment = require('moment');
+const { MessageEmbed, Collection } = require('discord.js');
+const moment = require('moment');
 
 // List of users in command cooldown
 const cooldowns = new Collection();
@@ -52,22 +51,6 @@ module.exports = async (bot, message) => {
 			return;
 		}
 
-		// make sure user is not on banned list
-		const banned = await Globalban.findOne({
-			userID: message.author.id,
-		}, async (err, res) => {
-			if (err) bot.logger.error(err.message);
-
-			// This is their first warning
-			if (res) {
-				return true;
-			} else {
-				return false;
-			}
-		});
-		if (banned) return message.channel.send('You are banned from using command');
-
-
 		// Make sure guild only commands are done in the guild only
 		if (message.guild && cmd.guildOnly)	return message.error(settings.Language, 'EVENTS/GUILD_COMMAND_ERROR').then(m => m.delete({ timeout: 5000 }));
 
@@ -94,15 +77,6 @@ module.exports = async (bot, message) => {
 
 		// make sure user doesn't access HOST commands
 		if (!bot.config.ownerID.includes(message.author.id) && cmd.conf.ownerID) return;
-
-		// Check bot has permissions
-		if (cmd.conf.botPermissions[0]) {
-			// If the bot doesn't have SEND_MESSAGES permissions just return
-			if (!message.channel.permissionsFor(bot.user).has('SEND_MESSAGES')) return;
-			if (!message.channel.permissionsFor(bot.user).has('EMBED_LINKS')) {
-				return message.sendT(settings.Language, 'MISSING_PERMISSION', 'EMBED_LINKS');
-			}
-		}
 
 		// Check to see if user is in 'cooldown'
 		if (!cooldowns.has(command.name)) {

@@ -26,10 +26,10 @@ module.exports = class SetMusic extends Command {
 		// update music plugin
 		try {
 			if (args[0] == 'true') {
-				await message.guild.updateGuild({ Music: true });
+				await message.guild.updateGuild({ MusicPlugin: true });
 				message.success(settings.Language, 'PLUGINS/MUSIC_SET', args[0]).then(m => m.delete({ timeout:10000 }));
 			} else if (args[0] == 'false') {
-				await message.guild.updateGuild({ Music: false });
+				await message.guild.updateGuild({ MusicPlugin: false });
 				message.success(settings.Language, 'PLUGINS/MUSIC_SET', args[0]).then(m => m.delete({ timeout:10000 }));
 			} else {
 				return message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
