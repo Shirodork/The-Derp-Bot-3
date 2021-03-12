@@ -65,7 +65,7 @@ module.exports = class heavenorhell1 extends Command {
 			'Coffee',
 			'HotDogPorn',
 			'facepalm',
-			'burningporn',
+			//'burningporn',
 			'facepalm',
 			'ImGoingToHellForThis',
 			'photography',
