@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js'),
 	fetch = require('node-fetch'),
 	Command = require('../../structures/Command.js');
 
-module.exports = class Fortnite extends Command {
+module.exports = class Instagram extends Command {
 	constructor(bot) {
 		super(bot, {
 			name: 'instagram',
@@ -37,6 +37,7 @@ module.exports = class Fortnite extends Command {
 			message.error(settings.Language, 'SEARCHER/UNKNOWN_USER').then(m => m.delete({ timeout: 10000 }));
 			return;
 		}
+		console.log(res.username)
 		// Checks to see if a username in instagram database
 		if (!res.graphql.user.username) {
 			r.delete();
