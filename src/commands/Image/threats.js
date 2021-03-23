@@ -12,6 +12,7 @@ module.exports = class Threats extends Command {
 			description: 'Creates a threat meme.',
 			usage: 'threats [image]',
 			cooldown: 5000,
+			examples: ['threats username', 'threats <attachment>'],
 		});
 	}
 
@@ -35,7 +36,7 @@ module.exports = class Threats extends Command {
 		} catch(err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

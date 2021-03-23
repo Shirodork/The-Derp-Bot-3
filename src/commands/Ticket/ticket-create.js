@@ -10,8 +10,9 @@ module.exports = class TicketCreate extends Command {
 			aliases: ['t-create', 't-open'],
 			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_CHANNELS'],
 			description: 'Creates a ticket',
-			usage: 'ticket-create',
+			usage: 'ticket-create [reason]',
 			cooldown: 3000,
+			examples: ['t-create Something isn\'t working'],
 		});
 	}
 
@@ -76,7 +77,7 @@ module.exports = class TicketCreate extends Command {
 			}).catch(err => {
 				if (message.deletable) message.delete();
 				bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-				message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+				message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 			});
 	}
 };

@@ -11,16 +11,17 @@ module.exports = async bot => {
 	// Load up audio player
 	bot.manager.init(bot.user.id);
 
-	// Load up discord bot
-	try {
-		await require('../helpers/DiscordBotListUpdate')(bot);
-	} catch (err) {
-		bot.logger.error(err.message);
-	}
-
 	setInterval(async () => {
 		bot.appInfo = await bot.fetchApplication();
 	}, 60000);
+
+	// set up webserver
+	try {
+		require('../http/api')(bot);
+		require('../http/webhook/dbl')(bot);
+	} catch (err) {
+		console.log(err);
+	}
 
 	// Updates the bot's status
 	setTimeout(() => {
@@ -63,4 +64,12 @@ module.exports = async bot => {
 
 	await DeleteGuildCheck();
 	bot.logger.ready('All guilds have been initialized.');
+
+
+	// Every 5 minutes fetch new guild data
+	setInterval(async () => {
+		bot.guilds.cache.forEach(async guild => {
+			guild.fetchGuildConfig();
+		});
+	}, 300000);
 };

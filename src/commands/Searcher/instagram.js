@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js'),
 	fetch = require('node-fetch'),
 	Command = require('../../structures/Command.js');
 
-module.exports = class Instagram extends Command {
+module.exports = class Fortnite extends Command {
 	constructor(bot) {
 		super(bot, {
 			name: 'instagram',
@@ -13,6 +13,7 @@ module.exports = class Instagram extends Command {
 			description: 'Get information on an Instagram account.',
 			usage: 'instagram <user>',
 			cooldown: 3000,
+			examples: ['instagram discord'],
 		});
 	}
 
@@ -28,21 +29,20 @@ module.exports = class Instagram extends Command {
 		const url = `https://instagram.com/${username}/?__a=1`;
 		const res = await fetch(url).then(info => info.json()).catch(err => {
 			// An error occured when looking for account
-			if (bot.config.debug) bot.logger.error(`${err.message} - command: instagram.`);
 			if (message.deletable) message.delete();
-			return message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			r.delete();
+			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
+			return message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		});
-		if (!Object.keys(res).length) {
-			r.delete();
-			message.error(settings.Language, 'SEARCHER/UNKNOWN_USER').then(m => m.delete({ timeout: 10000 }));
-			return;
-		}
-		console.log(res.username)
+
+		// Delete wait message
+		r.delete();
+
+		// make sure there is data
+		if (res.size == 0) return;
+
 		// Checks to see if a username in instagram database
-		if (!res.graphql.user.username) {
-			r.delete();
-			message.error(settings.Language, 'SEARCHER/UNKNOWN_USER').then(m => m.delete({ timeout: 10000 }));
-		}
+		if (!res.graphql.user.username) return message.error(settings.Language, 'SEARCHER/UNKNOWN_USER').then(m => m.delete({ timeout: 10000 }));
 
 		// Displays Data
 		const account = res.graphql.user;
@@ -59,7 +59,6 @@ module.exports = class Instagram extends Command {
 			.addField('Following:', account.edge_follow.count, true)
 			.addField('Private Account:', account.is_private ? 'Yes :x:' : 'No :white_check_mark:', true)
 			.addField('Verified account:', account.is_verified ? 'Yes' : 'No', true);
-		r.delete();
 		message.channel.send(embed);
 	}
 };

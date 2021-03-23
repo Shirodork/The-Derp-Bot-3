@@ -14,6 +14,7 @@ module.exports = class Warnings extends Command {
 			description: 'Display number of warnings a user has.',
 			usage: 'warnings [user]',
 			cooldown: 2000,
+			examples: ['warnings username'],
 		});
 	}
 
@@ -50,7 +51,7 @@ module.exports = class Warnings extends Command {
 		} catch (err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

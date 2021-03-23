@@ -17,6 +17,13 @@ module.exports = class Join extends Command {
 
 	// Run command
 	async run(bot, message, args, settings) {
+		// Check if the member has role to interact with music plugin
+		if (message.guild.roles.cache.get(settings.MusicDJRole)) {
+			if (!message.member.roles.cache.has(settings.MusicDJRole)) {
+				return message.error(settings.Language, 'MUSIC/MISSING_DJROLE').then(m => m.delete({ timeout: 10000 }));
+			}
+		}
+
 		// Check that a song is being played
 		let player = bot.manager.players.get(message.guild.id);
 
@@ -37,17 +44,24 @@ module.exports = class Join extends Command {
 
 		// If no player (no song playing) create one and join channel
 		if (!player) {
-			player = bot.manager.create({
-				guild: message.guild.id,
-				voiceChannel: message.member.voice.channel.id,
-				textChannel: message.channel.id,
-				selfDeafen: true,
-			});
+			try {
+				player = bot.manager.create({
+					guild: message.guild.id,
+					voiceChannel: message.member.voice.channel.id,
+					textChannel: message.channel.id,
+					selfDeafen: true,
+				});
+			} catch (err) {
+				if (message.deletable) message.delete();
+				bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
+				return message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
+			}
 			player.connect();
 		} else {
-			// Move the bot to the new voice channel
+			// Move the bot to the new voice channel / update text channel
 			try {
 				await player.setVoiceChannel(message.member.voice.channel.id);
+				await player.setTextChannel(message.channel.id);
 				const embed = new MessageEmbed()
 					.setColor(message.member.displayHexColor)
 					.setDescription(message.translate(settings.Language, 'MUSIC/CHANNEL_MOVE'));
@@ -55,7 +69,7 @@ module.exports = class Join extends Command {
 			} catch (err) {
 				if (message.deletable) message.delete();
 				bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-				message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+				message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 			}
 		}
 	}

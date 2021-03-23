@@ -15,6 +15,7 @@ module.exports = class Rank extends Command {
 			description: 'Shows your rank/Level.',
 			usage: 'level [username]',
 			cooldown: 3000,
+			examples: ['level userID', 'level @mention', 'level username'],
 		});
 	}
 
@@ -22,6 +23,12 @@ module.exports = class Rank extends Command {
 	async run(bot, message, args, settings) {
 		// Get user
 		const member = message.guild.getMember(message, args);
+
+		// Check if bot has permission to attach files
+		if (!message.channel.permissionsFor(bot.user).has('ATTACH_FILES')) {
+			bot.logger.error(`Missing permission: \`ATTACH_FILES\` in [${message.guild.id}].`);
+			return message.error(settings.Language, 'MISSING_PERMISSION', 'ATTACH_FILES').then(m => m.delete({ timeout: 10000 }));
+		}
 
 		// Retrieve Rank from databse
 		try {
@@ -69,7 +76,7 @@ module.exports = class Rank extends Command {
 			});
 		} catch (err) {
 			bot.logger.error(`${err.message} when running command: rank.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

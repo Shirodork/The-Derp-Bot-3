@@ -1,7 +1,7 @@
 // Dependencies
 const Client = require('./base/DerpBot.js');
 require('./structures');
-const bot = new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'], fetchAllMembers: true, ws: { intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_BANS', 'GUILD_EMOJIS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES', 'GUILD_PRESENCES', 'GUILD_VOICE_STATES'] } });
+const bot = new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'], fetchAllMembers: true, ws: { intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_BANS', 'GUILD_EMOJIS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES', 'GUILD_VOICE_STATES'] } });
 const { promisify } = require('util');
 const readdir = promisify(require('fs').readdir);
 
@@ -11,8 +11,10 @@ const readdir = promisify(require('fs').readdir);
 	const cmdFolders = await readdir('./src/commands/');
 	bot.logger.log('=-=-=-=-=-=-=- Loading command(s): 125 -=-=-=-=-=-=-=');
 	cmdFolders.forEach(async (dir) => {
+		if (bot.config.disabledPlugins.includes(dir)) return;
 		const commands = await readdir('./src/commands/' + dir + '/');
 		commands.forEach((cmd) => {
+			if (bot.config.disabledCommands.includes(cmd.replace('.js', ''))) return;
 			const resp = bot.loadCommand('./commands/' + dir, cmd);
 			if (resp) bot.logger.error(resp);
 		});
@@ -28,15 +30,18 @@ const readdir = promisify(require('fs').readdir);
 		bot.on(eventName, event.bind(null, bot));
 	});
 
-	// music
+	// Audio player
 	try {
-		require('./base/Audio-Player')(bot);
+		require('./base/Audio-Manager')(bot);
 	} catch (e) {
 		bot.logger.error(e);
 	}
 
 	// Connect bot to database
 	bot.mongoose.init(bot);
+
+	// load up adult site block list
+	bot.fetchAdultSiteList();
 
 	// Connect bot to discord API
 	const token = bot.config.token;

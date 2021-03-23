@@ -13,6 +13,7 @@ module.exports = class TicketSetup extends Command {
 			description: 'Setups the ticket plugin',
 			usage: 'ticket-setup',
 			cooldown: 3000,
+			examples: ['t-setup category 783024613037703237', 't-setup role 766029837017153576'],
 		});
 	}
 
@@ -28,11 +29,14 @@ module.exports = class TicketSetup extends Command {
 				.setDescription(`\`${settings.prefix}ticket-setup category <channelID>\` - The parent of the channels \n\`${settings.prefix}ticket-setup role <roleID>\` - The support role for accessing channels`);
 			message.channel.send(embed);
 		} else if (args[0] == 'category') {
+
+			// update category channel
 			try {
 				const channel = message.guild.channels.cache.get(args[1]);
 				if (!channel || channel.type != 'category') return message.channel.send('That is not a category.');
 				// update database
 				await message.guild.updateGuild({ TicketCategory: args[1] });
+				settings.TicketCategory = args[1];
 				message.channel.send(`Updated Ticket category to: \`${channel.name}\`.`);
 			} catch (err) {
 				if (message.deletable) message.delete();
@@ -40,16 +44,19 @@ module.exports = class TicketSetup extends Command {
 				message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
 			}
 		} else if (args[0] == 'role') {
+
+			// update support role
 			try {
 				const supportRole = message.guild.roles.cache.find(role => role.id == args[1]);
 				if (!supportRole) return message.channel.send('That is not a role.');
 				// update database
 				await message.guild.updateGuild({ TicketSupportRole: args[1] });
+				settings.TicketSupportRole = args[1];
 				message.channel.send(`Updated support role to: ${supportRole}.`);
 			} catch (err) {
 				if (message.deletable) message.delete();
 				bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-				message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+				message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 			}
 		}
 	}

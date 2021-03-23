@@ -13,6 +13,7 @@ module.exports = class Stickbug extends Command {
 			description: 'Create a stickbug meme.',
 			usage: 'stickbug [file]',
 			cooldown: 5000,
+			examples: ['stickbug username', 'stickbug <attachment>'],
 		});
 	}
 
@@ -20,6 +21,12 @@ module.exports = class Stickbug extends Command {
 	async run(bot, message, args, settings) {
 		// Get image, defaults to author's avatar
 		const file = message.guild.GetImage(message, args, settings.Language);
+
+		// Check if bot has permission to attach files
+		if (!message.channel.permissionsFor(bot.user).has('ATTACH_FILES')) {
+			bot.logger.error(`Missing permission: \`ATTACH_FILES\` in [${message.guild.id}].`);
+			return message.error(settings.Language, 'MISSING_PERMISSION', 'ATTACH_FILES').then(m => m.delete({ timeout: 10000 }));
+		}
 
 		// send 'waiting' message
 		const msg = await message.sendT(settings.Language, 'IMAGE/GENERATING_IMAGE');
@@ -35,7 +42,7 @@ module.exports = class Stickbug extends Command {
 		} catch(err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

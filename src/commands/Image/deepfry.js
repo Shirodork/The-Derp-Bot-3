@@ -13,6 +13,7 @@ module.exports = class Deepfry extends Command {
 			description: 'Deepfry an image.',
 			usage: 'deepfry [file]',
 			cooldown: 5000,
+			examples: ['deepfry <attachment>', 'deepfry username'],
 		});
 	}
 
@@ -37,7 +38,7 @@ module.exports = class Deepfry extends Command {
 		} catch(err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

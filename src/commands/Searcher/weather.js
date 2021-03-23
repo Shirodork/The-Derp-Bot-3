@@ -13,6 +13,7 @@ module.exports = class Weather extends Command {
 			description: 'Look up the weather in a certain area.',
 			usage: 'weather <location>',
 			cooldown: 3000,
+			examples: ['weather england', 'weather new york'],
 		});
 	}
 
@@ -36,7 +37,7 @@ module.exports = class Weather extends Command {
 			} catch(err) {
 				if (message.deletable) message.delete();
 				bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-				message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+				message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 			}
 		});
 	}

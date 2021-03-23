@@ -1,16 +1,18 @@
-// Dependencies
-const Command = require('../../structures/Command.js');
+// Dependecies
+const { MessageEmbed } = require('discord.js'),
+	delay = ms => new Promise(res => setTimeout(res, ms)),
+	Command = require('../../structures/Command.js');
 
-module.exports = class NightCore extends Command {
+module.exports = class Nightcore extends Command {
 	constructor(bot) {
 		super(bot, {
 			name: 'nightcore',
 			dirname: __dirname,
-			aliases: ['ncore'],
-			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'CONNECT', 'SPEAK'],
-			description: 'Toggles Nightcore audio affect.',
+			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
+			description: 'Toggles nightcore mode.',
 			usage: 'nightcore',
 			cooldown: 3000,
+			examples: ['nightcore off'],
 		});
 	}
 
@@ -23,18 +25,27 @@ module.exports = class NightCore extends Command {
 		// Check that user is in the same voice channel
 		if (message.member.voice.channel.id !== player.voiceChannel) return message.error(settings.Language, 'MUSIC/NOT_VOICE').then(m => m.delete({ timeout: 5000 }));
 
-		if (player.nightcore === true) {
-			console.log('should be false')
-			// Change Nightcore value
-			player.setNightcore(!player.nightcore)
-			message.channel.send(`Nightcore Effect has been set to: ${player.nightcore}`);
-
-		} else if (player.nightcore === false) {
-			// Change Nightcore value
-			player.setNightcore(!player.nightcore);
-			player.nightcore = true		// TODO: Code does not auto-grab updated value. Need to grab updated value
-			message.channel.send(`Nightcore Effect has been set to: ${player.nightcore}`);
+		if (args[0] && (args[0].toLowerCase() == 'reset' || args[0].toLowerCase() == 'off')) {
+			player.resetFilter();
+			const msg = await message.channel.send('Turning off **nightcore**. This may take a few seconds...');
+			const embed = new MessageEmbed()
+				.setDescription('Turned off **nightcore**');
+			await delay(5000);
+			return msg.edit('', embed);
+		} else {
+			player.setFilter({
+				equalizer: [
+					{ band: 1, gain: 0.3 },
+					{ band: 0, gain: 0.3 },
+				],
+				timescale: { pitch: 1.2 },
+				tremolo: { depth: 0.3, frequency: 14 },
+			});
+			const msg = await message.channel.send('Enabling **Nightcore**. This may take a few seconds...');
+			const embed = new MessageEmbed()
+				.setDescription('Turned on **Nightcore**');
+			await delay(5000);
+			return msg.edit('', embed);
 		}
 	}
-
 };

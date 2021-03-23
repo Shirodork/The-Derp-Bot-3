@@ -7,12 +7,12 @@ const { Client, Collection } = require('discord.js'),
 	{ KSoftClient } = require('@ksoft/api'),
 	path = require('path');
 
-// Creates Derpbot class
-module.exports = class Derpbot extends Client {
+// Creates DerpBot class
+module.exports = class DerpBot extends Client {
 	constructor(options) {
 		super(options);
 		// for console logging
-		this.logger = require('../modules/logging');
+		this.logger = require('../utils/logger');
 
 		// Giveaway manager
 		this.giveawaysManager = new GiveawaysManager(this, {
@@ -51,6 +51,10 @@ module.exports = class Derpbot extends Client {
 		// Basic statistics for the bot
 		this.messagesSent = 0;
 		this.commandsUsed = 0;
+
+		// for Screenshot command
+		this.adultSiteList = null;
+
 	}
 
 	// when the this joins add guild settings to server
@@ -71,17 +75,23 @@ module.exports = class Derpbot extends Client {
 	// Fetch user ID from discord API
 	async getUser(ID) {
 		try {
-			const user = (this.users.cache.get(ID)) ? this.users.cache.get(ID) : await this.users.fetch(ID);
+			const user = await this.users.fetch(ID);
 			return user;
-		} catch (e) {
-			console.log(e);
+		} catch (err) {
+			console.log(err.message);
+			return false;
 		}
 	}
 
 	// Get a channel in cache
 	async getChannel(id) {
-		const channel = await this.channels.cache.get(id);
-		return channel;
+		try {
+			const channel = await this.channels.cache.get(id);
+			return channel;
+		} catch (err) {
+			console.log(err.message);
+			return false;
+		}
 	}
 
 	// Set this's status
@@ -89,9 +99,9 @@ module.exports = class Derpbot extends Client {
 		try {
 			await this.user.setStatus(status);
 			return;
-		} catch (e) {
-			console.log(e);
-			return e;
+		} catch (err) {
+			console.log(err.message);
+			return false;
 		}
 	}
 
@@ -139,5 +149,10 @@ module.exports = class Derpbot extends Client {
 		return false;
 	}
 
-
+	// Fetches adult sites for screenshot NSFW blocking
+	async fetchAdultSiteList() {
+		const blockedWebsites = require('../assets/json/NSFW_websites.json');
+		this.adultSiteList = blockedWebsites.websites;
+		return this.adultSiteList;
+	}
 };

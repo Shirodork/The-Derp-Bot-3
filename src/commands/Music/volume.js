@@ -12,11 +12,19 @@ module.exports = class Back extends Command {
 			description: 'Changes the volume of the song',
 			usage: 'volume <Number>',
 			cooldown: 3000,
+			examples: ['volume 50'],
 		});
 	}
 
 	// Run command
 	async run(bot, message, args, settings) {
+		// Check if the member has role to interact with music plugin
+		if (message.guild.roles.cache.get(settings.MusicDJRole)) {
+			if (!message.member.roles.cache.has(settings.MusicDJRole)) {
+				return message.error(settings.Language, 'MUSIC/MISSING_DJROLE').then(m => m.delete({ timeout: 10000 }));
+			}
+		}
+
 		// Check that a song is being played
 		const player = bot.manager.players.get(message.guild.id);
 		if (!player) return message.error(settings.Language, 'MUSIC/NO_QUEUE').then(m => m.delete({ timeout: 5000 }));
@@ -32,8 +40,8 @@ module.exports = class Back extends Command {
 			return message.channel.send(embed);
 		}
 
-		// make sure the number was between 0 and 100
-		if (Number(args[0]) <= 0 || Number(args[0]) > 100) {
+		// make sure the number was between 0 and 1000
+		if (Number(args[0]) <= 0 || Number(args[0]) > 1000) {
 			return message.error(settings.Language, 'MUSIC/TOO_HIGH');
 		}
 

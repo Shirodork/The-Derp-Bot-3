@@ -13,6 +13,7 @@ module.exports = class Kick extends Command {
 			description: 'Kick a user.',
 			usage: 'kick <user> [reason]',
 			cooldown: 5000,
+			examples: ['kick username spamming chat'],
 		});
 	}
 
@@ -61,7 +62,7 @@ module.exports = class Kick extends Command {
 		} catch (err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

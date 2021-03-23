@@ -13,6 +13,7 @@ module.exports = class Warn extends Command {
 			description: 'Warn a user.',
 			usage: 'warn <user> [time] [reason]',
 			cooldown: 5000,
+			examples: ['warn username', 'warn username 3m bad'],
 		});
 	}
 
@@ -44,7 +45,7 @@ module.exports = class Warn extends Command {
 		} catch (err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

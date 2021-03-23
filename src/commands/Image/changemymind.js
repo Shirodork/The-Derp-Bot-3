@@ -13,6 +13,7 @@ module.exports = class ChangeMyMind extends Command {
 			description: 'Create a change my mind image.',
 			usage: 'changemymind <text>',
 			cooldown: 5000,
+			examples: ['changemymind Egglord is the greatest'],
 		});
 	}
 
@@ -43,7 +44,7 @@ module.exports = class ChangeMyMind extends Command {
 		} catch(err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

@@ -13,6 +13,7 @@ module.exports = class Blurpify extends Command {
 			description: 'Blurpify an image.',
 			usage: 'blurpify [file]',
 			cooldown: 5000,
+			examples: ['blurpify <attachment>', 'blurpify username'],
 		});
 	}
 
@@ -36,7 +37,7 @@ module.exports = class Blurpify extends Command {
 		} catch(err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 		msg.delete();
 	}
