@@ -11,7 +11,7 @@ module.exports = async (bot) => {
 
 	bot.manager = new Manager({
 		nodes: [
-			{ host: 'localhost', port: 5000, password: 'youshallnotpass' },
+			{ host: 'localhost', port: 5001, password: 'youshallnotpass' },
 		],
 		plugins: [
 			new Spotify({ clientID, clientSecret }),

@@ -12,6 +12,7 @@ module.exports = class Fortnite extends Command {
 			description: 'Get information on a Fortnite account.',
 			usage: 'fortnite <kbm | gamepad | touch> <user>',
 			cooldown: 3000,
+			examples: ['fortnite kbm ninja'],
 		});
 	}
 
@@ -45,7 +46,7 @@ module.exports = class Fortnite extends Command {
 			r.delete();
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		});
 	}
 };

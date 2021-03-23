@@ -12,9 +12,8 @@ module.exports = class PCreate extends Command {
 			dirname: __dirname,
 			aliases: ['playlist-create'],
 			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
-			description: 'Create a playlist. Playlist Name cannot contain spaces!',
+			description: 'Create a playlist',
 			usage: 'p-create <playlist name> <search query/link>',
-			example: ['p-create Lofi-Beats Lofi'],
 			cooldown: 3000,
 		});
 	}
@@ -68,7 +67,7 @@ module.exports = class PCreate extends Command {
 					msg.edit('', embed);
 				} else {
 					msg.delete();
-					return message.channel.send(`\`${args[1]}\` is not a playlist / or a playlist could not be found`);
+					return message.channel.send(`\`${args[1]}\` is not a plylist / or a playlist could not be found`);
 				}
 			} else {
 				message.channel.send('A playlist already exists with that name in this guild.');
