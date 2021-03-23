@@ -8,8 +8,9 @@ function sendMessage(newGuild, settings, embed) {
 }
 
 module.exports = async (bot, oldGuild, newGuild) => {
-	// Get server settings
+	// Get server settings / if no settings then return
 	const settings = newGuild.guild.settings;
+	if (Object.keys(settings).length == 0) return;
 
 	let embed;
 	// Check if event guildUpdate is for logging
@@ -24,6 +25,7 @@ module.exports = async (bot, oldGuild, newGuild) => {
 				.addField('After:', newGuild.name)
 				.setTimestamp();
 			bot.updateGuild(newGuild, { guildName: newGuild.name });
+			settings.guildName = newGuild.name;
 			sendMessage(newGuild, settings, embed);
 		}
 

@@ -10,20 +10,29 @@ module.exports = class G_start extends Command {
 			aliases: ['gstart', 'g-create'],
 			userPermissions: ['MANAGE_GUILD'],
 			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-			description: 'Start a giveaway. Time Syntax (d, h, m, s) | Example: gstart 1h 1 Discord Nitro',
+			description: 'Start a giveaway',
 			usage: 'g-start <time> <Number of winners> <prize>',
 			cooldown: 30000,
+			examples: ['g-start 1m 1 nitro', 'g-start 2h30m 3 nitro classic'],
 		});
 	}
 
 	// Run command
 	async run(bot, message, args, settings) {
+		// delete command
+		if (message.deletable) message.delete();
+
 		// Make sure the user has the right permissions to use giveaway
 		if (!message.member.hasPermission('MANAGE_GUILD')) return message.error(settings.Language, 'USER_PERMISSION', 'MANAGE_GUILD').then(m => m.delete({ timeout: 10000 }));
 
+		// Check if bot has permission to add reactions
+		if (!message.channel.permissionsFor(bot.user).has('ADD_REACTIONS')) {
+			bot.logger.error(`Missing permission: \`ADD_REACTIONS\` in [${message.guild.id}].`);
+			return message.error(settings.Language, 'MISSING_PERMISSION', 'ADD_REACTIONS').then(m => m.delete({ timeout: 10000 }));
+		}
+
 		// Make sure a time, winner count & prize is entered
 		if (args.length <= 2) {
-			if (message.deletable) message.delete();
 			return message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
 		}
 
@@ -32,14 +41,12 @@ module.exports = class G_start extends Command {
 		if (!time) return;
 
 		// Make sure that number of winners is a number
-		if (isNaN(args[1])) {
-			if (message.deletable) message.delete();
+		if (isNaN(args[1]) || args[1] > 10) {
 			return message.error(settings.Language, 'GIVEAWAY/INCORRECT_WINNER_COUNT').then(m => m.delete({ timeout: 5000 }));
 		}
 
 		// Make sure prize is less than 256 characters
 		if (args.slice(2).join(' ').length >= 256) {
-			if (message.deletable) message.delete();
 			return message.channel.send('Prize must be less than 256 characters long.').then(m => m.delete({ timeout: 5000 }));
 		}
 
@@ -54,9 +61,8 @@ module.exports = class G_start extends Command {
 		}).then(() => {
 			bot.logger.log(`${message.author.tag} started a giveaway in server: [${message.guild.id}].`);
 		}).catch(err => {
-			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		});
 	}
 };

@@ -12,6 +12,7 @@ module.exports = class Clyde extends Command {
 			description: 'Create a fake Clyde message.',
 			usage: 'clyde <text>',
 			cooldown: 5000,
+			examples: ['clyde Hello I\'m a bot'],
 		});
 	}
 
@@ -40,7 +41,7 @@ module.exports = class Clyde extends Command {
 		} catch(err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

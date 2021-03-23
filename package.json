@@ -12,20 +12,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Shirodork/The-Derp-Bot-3.git"
+    "url": "git+https://github.com/Spiderjockey02/Discord-Bot.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Shirodork/The-Derp-Bot-3/issues"
+    "url": "https://github.com/Spiderjockey02/Discord-Bot/issues"
   },
-  "homepage": "https://github.com/Shirodork/The-Derp-Bot-3",
+  "homepage": "https://github.com/Spiderjockey02/Discord-Bot#readme",
   "dependencies": {
     "@discordjs/opus": "^0.4.0",
     "@ksoft/api": "^3.1.9",
     "axios": "^0.21.1",
     "canvacord": "^5.0.8",
+    "canvas": "^2.7.0",
     "chalk": "^4.1.0",
     "cheerio": "^1.0.0-rc.5",
     "cli": "^1.0.1",
@@ -52,6 +53,7 @@
     "path": "^0.12.7",
     "puppeteer": "^7.1.0",
     "r6api.js": "^1.6.0",
+    "radio-browser": "^2.1.6",
     "string-progressbar": "^1.0.3",
     "string-similarity": "^4.0.4",
     "tinyurl": "^1.1.7",

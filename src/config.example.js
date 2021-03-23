@@ -5,7 +5,10 @@ const config = {
 	// For looking up Twitch, Fortnite, Steam accounts
 	api_keys: {
 		// https://dev.twitch.tv/console/apps
-		twitch: 'twitchAPI-Key',
+		twitch: {
+			clientID: '',
+			clientSecret: '',
+		},
 		// https://fortnitetracker.com/site-api
 		fortnite: 'fortniteAPI-Key',
 		// https://api.ksoft.si/
@@ -27,7 +30,7 @@ const config = {
 		// https://amethyste.moe/en
 		amethyste: 'amethysteAPI-Key',
 	},
-	// IF you want any commands/plugins disabled
+	// add plugins/commands here if you don't want them loaded in the bot.
 	disabledCommands: [],
 	disabledPlugins: [],
 	// This is a list of websites that the bot is on. API to interect with server/shard count
@@ -56,8 +59,9 @@ const config = {
 	// This is just so some commands can be ran in DM channels
 	defaultSettings: {
 		// default settings
-		prefix: '!',
+		prefix: 'e!',
 		Language: 'en-US',
+		plugins: ['Fun', 'Image', 'Misc', 'NSFW', 'Recording', 'Searcher'],
 	},
 	// Custom emojis, just for cosmetic (change these if you wish)
 	emojis: {

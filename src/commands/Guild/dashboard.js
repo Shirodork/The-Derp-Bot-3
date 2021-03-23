@@ -16,8 +16,7 @@ module.exports = class Dashboard extends Command {
 	}
 
 	// Run command
-	async run(bot, message) {	
-		message.channel.send(`Dashboard is under construction. Github: ${bot.config.websiteURL}`);
-		//message.channel.send(`${bot.config.websiteURL}/dashboard/${message.guild.id}`);
+	async run(bot, message) {
+		message.channel.send(`${bot.config.websiteURL}/dashboard/${message.guild.id}`);
 	}
 };

@@ -11,11 +11,19 @@ module.exports = class Search extends Command {
 			description: 'Searches for a song.',
 			usage: 'search <link | song name>',
 			cooldown: 3000,
+			examples: ['search palaye royale'],
 		});
 	}
 
 	// Run command
 	async run(bot, message, args, settings) {
+		// Check if the member has role to interact with music plugin
+		if (message.guild.roles.cache.get(settings.MusicDJRole)) {
+			if (!message.member.roles.cache.has(settings.MusicDJRole)) {
+				return message.error(settings.Language, 'MUSIC/MISSING_DJROLE').then(m => m.delete({ timeout: 10000 }));
+			}
+		}
+
 		// make sure user is in a voice channel
 		if (!message.member.voice.channel) return message.channel.send('You\'re not in a voice channel that I can connect to.');
 
@@ -40,12 +48,19 @@ module.exports = class Search extends Command {
 		if (!args) return message.error(settings.Language, 'MUSIC/NO_ARGS');
 
 		// Create player
-		const player = bot.manager.create({
-			guild: message.guild.id,
-			voiceChannel: message.member.voice.channel.id,
-			textChannel: message.channel.id,
-			selfDeafen: true,
-		});
+		let player;
+		try {
+			player = bot.manager.create({
+				guild: message.guild.id,
+				voiceChannel: message.member.voice.channel.id,
+				textChannel: message.channel.id,
+				selfDeafen: true,
+			});
+		} catch (err) {
+			if (message.deletable) message.delete();
+			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
+			return message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
+		}
 
 		const search = args.join(' ');
 		let res;

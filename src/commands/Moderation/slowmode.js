@@ -12,6 +12,7 @@ module.exports = class SlowMode extends Command {
 			description: 'Activate slowmode on a channel.',
 			usage: 'slowmode <time | off>',
 			cooldown: 5000,
+			examples: ['slowmode off', 'slowmode 1m'],
 		});
 	}
 
@@ -23,8 +24,8 @@ module.exports = class SlowMode extends Command {
 		// Make sure user can activate slowmode
 		if (!message.member.hasPermission('MANAGE_CHANNELS')) return message.error(settings.Language, 'USER_PERMISSION', 'MANAGE_CHANNELS').then(m => m.delete({ timeout: 10000 }));
 
-		// Check if bot can activate sowmode
-		if (!message.guild.me.hasPermission('MANAGE_CHANNELS')) {
+		// Check if bot can activate slowmode
+		if (!message.channel.permissionsFor(bot.user).has('MANAGE_CHANNELS')) {
 			bot.logger.error(`Missing permission: \`MANAGE_CHANNELS\` in [${message.guild.id}].`);
 			return message.error(settings.Language, 'MISSING_PERMISSION', 'MANAGE_CHANNELS').then(m => m.delete({ timeout: 10000 }));
 		}
@@ -45,9 +46,8 @@ module.exports = class SlowMode extends Command {
 			await message.channel.setRateLimitPerUser(time / 1000);
 			message.success(settings.Language, 'MODERATION/SUCCESSFULL_SLOWMODE', args[0]).then(m => m.delete({ timeout:15000 }));
 		} catch (err) {
-			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

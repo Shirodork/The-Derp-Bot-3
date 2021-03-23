@@ -12,6 +12,7 @@ module.exports = class ShortURL extends Command {
 			description: 'Creates a shorturl on the URL you sent.',
 			usage: 'shorturl',
 			cooldown: 3000,
+			examples: ['shorturl https://www.google.com', 'shorturl https://www.youtube.com'],
 		});
 	}
 
@@ -25,7 +26,7 @@ module.exports = class ShortURL extends Command {
 		} catch (err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_URL').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

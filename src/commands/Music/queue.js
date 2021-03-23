@@ -12,7 +12,7 @@ function paginator(page, msg, queue, Currentposition, prefix) {
 			}
 		}
 		if (queue.length < 10) {
-			resp += `\n\tThis is the end of the queue!\n\tUse ${prefix}play to add more\n`;
+			resp += `\n\tThis is the end of the queue!\n\tUse ${prefix}play to add more :^)\n`;
 		}
 		resp += '```';
 		msg.edit(resp);
@@ -26,7 +26,7 @@ function paginator(page, msg, queue, Currentposition, prefix) {
 				resp += `${i}) ${queue[i].title} ${new Date(queue[i].duration).toISOString().slice(14, 19)}\n`;
 			} else if (!end) {
 				// show end of queue message
-				resp += `\n\tThis is the end of the queue!\n\tUse ${prefix}play to add more\n`;
+				resp += `\n\tThis is the end of the queue!\n\tUse ${prefix}play to add more :^)\n`;
 				end = true;
 			}
 		}
@@ -45,7 +45,7 @@ module.exports = class Queue extends Command {
 			dirname: __dirname,
 			aliases: ['que'],
 			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'SPEAK'],
-			description: 'Displays the current song queue.',
+			description: 'Displays the queue.',
 			usage: 'queue',
 			cooldown: 3000,
 		});
@@ -53,6 +53,13 @@ module.exports = class Queue extends Command {
 
 	// Run command
 	async run(bot, message, args, settings) {
+		// Check if the member has role to interact with music plugin
+		if (message.guild.roles.cache.get(settings.MusicDJRole)) {
+			if (!message.member.roles.cache.has(settings.MusicDJRole)) {
+				return message.error(settings.Language, 'MUSIC/MISSING_DJROLE').then(m => m.delete({ timeout: 10000 }));
+			}
+		}
+
 		// Check that a song is being played
 		const player = bot.manager.players.get(message.guild.id);
 		if (!player) return message.error(settings.Language, 'MUSIC/NO_QUEUE').then(m => m.delete({ timeout: 5000 }));
@@ -73,7 +80,7 @@ module.exports = class Queue extends Command {
 		const queue = player.queue;
 		if (queue.size == 0) {
 			// eslint-disable-next-line quotes
-			message.channel.send('```ml\n The queue is empty!```');
+			message.channel.send('```ml\n The queue is empty ;-;```');
 			return;
 		}
 		// display queue
@@ -87,7 +94,7 @@ module.exports = class Queue extends Command {
 			}
 		}
 		if (queue.length < 10) {
-			resp += `\n\tThis is the end of the queue!\n\tUse ${settings.prefix}play to add more\n`;
+			resp += `\n\tThis is the end of the queue!\n\tUse ${settings.prefix}play to add more :^)\n`;
 		}
 		resp += '```';
 

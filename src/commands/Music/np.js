@@ -8,7 +8,7 @@ module.exports = class NowPlaying extends Command {
 		super(bot, {
 			name: 'np',
 			dirname: __dirname,
-			aliases: ['song', 'nowplaying'],
+			aliases: ['song'],
 			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
 			description: 'Shows the current song playing.',
 			usage: 'np',
@@ -18,9 +18,16 @@ module.exports = class NowPlaying extends Command {
 
 	// Run command
 	async run(bot, message, args, settings) {
+		// Check if the member has role to interact with music plugin
+		if (message.guild.roles.cache.get(settings.MusicDJRole)) {
+			if (!message.member.roles.cache.has(settings.MusicDJRole)) {
+				return message.error(settings.Language, 'MUSIC/MISSING_DJROLE').then(m => m.delete({ timeout: 10000 }));
+			}
+		}
+
 		// Check that a song is being played
 		const player = bot.manager.players.get(message.guild.id);
-		if (!player) return message.error(settings.Language, 'MUSIC/NO_QUEUE').then(m => m.delete({ timeout: 5000 }));
+		if (!player || !player.queue.current) return message.error(settings.Language, 'MUSIC/NO_QUEUE').then(m => m.delete({ timeout: 5000 }));
 
 		// Get current song information
 		const { title, requester, thumbnail, uri, duration } = player.queue.current;
@@ -32,12 +39,12 @@ module.exports = class NowPlaying extends Command {
 				.setColor(message.member.displayHexColor)
 				.setThumbnail(thumbnail)
 				.setDescription(`[${title}](${uri}) [${message.guild.member(requester)}]`)
-				.addField('\u200b', new Date(player.position).toISOString().slice(11, 19) + ' [' + createBar(duration > 6.048e+8 ? player.position : duration, player.position, 15)[0] + '] ' + end, false);
+				.addField('\u200b', new Date(player.position * player.speed).toISOString().slice(11, 19) + ' [' + createBar(duration > 6.048e+8 ? player.position * player.speed : duration, player.position * player.speed, 15)[0] + '] ' + end, false);
 			message.channel.send(embed);
 		} catch (err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

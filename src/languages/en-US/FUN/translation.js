@@ -1,11 +1,7 @@
 // This contains language files for the commands
 const languageData = {
-	CAT_TITLE: 'Random Cat Fact:',
-	DAD_TITLE: 'Random Dad Joke:',
-	DOG_TITLE: 'Random Dog Fact:',
-	EIGHT_TITLE: 'The Eight Ball Says:',
 	FACT_TITLE: 'Random Fact:',
-	FLIP_CHOICE: (choice) => `${['Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Head', 'Tails', 'Wow! It landed on it\'s side!'][choice]}`,
+	FLIP_CHOICE: (choice) => `${['Head', 'Tails'][choice]}`,
 	MEME_TITLE: 'From',
 	MEME_FOOTER: 'Provided by',
 	MISSING_POKEMON: 'That pokemon doesn\'t exist',
@@ -23,6 +19,7 @@ const languageData = {
 	URBAN_DESCRIPTION: (r) => `${r[0]}\n**Example:**\n${r[1]}`,
 	PERSON_AUTHOR: 'I found a person over internet whose name is ',
 	PERSON_FOOTER: 'NOTE : These all are randomly generated through an API.',
+	INVALID_URL: 'That is an incorrect URL.',
 };
 
 const translate = (key, args) => {

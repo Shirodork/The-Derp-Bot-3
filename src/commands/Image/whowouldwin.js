@@ -13,6 +13,7 @@ module.exports = class WhoWouldWin extends Command {
 			description: 'Create a whowouldwin image.',
 			usage: 'whowouldwin <user1> [user2]',
 			cooldown: 5000,
+			examples: ['whowouldwin username username', 'whowouldwin username <attachment>'],
 		});
 	}
 
@@ -32,14 +33,11 @@ module.exports = class WhoWouldWin extends Command {
 			const embed = new MessageEmbed()
 				.setImage(json.message);
 			msg.delete();
-			const msg1 = await message.channel.send(embed);
-		// Add reactions to message
-		await msg1.react('◀️');
-		await msg1.react('▶️');
+			message.channel.send(embed);
 		} catch(err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };
