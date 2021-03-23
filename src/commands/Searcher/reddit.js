@@ -11,7 +11,6 @@ module.exports = class Reddit extends Command {
 			description: 'Send a random image from a chosen subreddit.',
 			usage: 'reddit <subreddit>',
 			cooldown: 3000,
-			examples: ['reddit meme'],
 		});
 	}
 
@@ -41,7 +40,7 @@ module.exports = class Reddit extends Command {
 		} catch (err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			return message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
+			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };
