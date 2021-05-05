@@ -18,23 +18,24 @@ module.exports = class G_delete extends Command {
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
+	async run(bot, message, settings) {
 		// Make sure the user has the right permissions to use giveaway
-		if (!message.member.hasPermission('MANAGE_GUILD')) return message.error(settings.Language, 'USER_PERMISSION', 'MANAGE_GUILD').then(m => m.delete({ timeout: 10000 }));
+		if (!message.member.hasPermission('MANAGE_GUILD')) return message.channel.error(settings.Language, 'USER_PERMISSION', 'MANAGE_GUILD').then(m => m.delete({ timeout: 10000 }));
 
 		// Make sure the message ID of the giveaway embed is entered
-		if (!args[0]) {
+		if (!message.args[0]) {
 			if (message.deletable) message.delete();
-			return message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
+			return message.channel.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
 		}
 
 		// Delete the giveaway
-		const messageID = args[0];
+		const messageID = message.args[0];
 		bot.giveawaysManager.delete(messageID).then(() => {
-			message.sendT(settings.Language, 'GIVEAWAY/SUCCESS_GIVEAWAY', 'deleted');
+			message.channel.send(bot.translate(settings.Language, 'GIVEAWAY/SUCCESS_GIVEAWAY', 'deleted'));
 		}).catch((err) => {
-			bot.logger.error(err);
-			message.sendT(settings.Language, 'GIVEAWAY/UNKNOWN_GIVEAWAY', messageID);
+			if (message.deletable) message.delete();
+			bot.logger.error(`Command: 'g-delete' has error: ${err.message}.`);
+			message.channel.send(bot.translate(settings.Language, 'GIVEAWAY/UNKNOWN_GIVEAWAY', messageID));
 		});
 	}
 };

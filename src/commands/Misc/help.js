@@ -9,14 +9,15 @@ module.exports = class Help extends Command {
 			dirname: __dirname,
 			botPermissions: [ 'SEND_MESSAGES', 'EMBED_LINKS'],
 			description: 'Sends information about all the commands that I can do.',
-			usage: 'help [command | plugin]',
+			usage: 'help [command]',
 			cooldown: 2000,
+			examples: ['help play'],
 		});
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
-		if (!args[0]) {
+	async run(bot, message, settings) {
+		if (!message.args[0]) {
 			// Show default help page
 			const embed = new MessageEmbed()
 				.setAuthor('Available commands', bot.user.displayAvatarURL({ format: 'png' }))
@@ -24,7 +25,7 @@ module.exports = class Help extends Command {
 					`**Prefix:** \`${settings.prefix}\` (You can also use <@!${bot.user.id}> as a prefix)`,
 					`**Type \`${settings.prefix}help [command name]\` for command specific information.**`,
 				].join('\n'));
-			const categories = bot.commands.map(c => c.help.category).filter((c) => settings.plugins.includes(c)).filter((v, i, a) => a.indexOf(v) === i);
+			const categories = bot.commands.map(c => c.help.category).filter((v, i, a) => settings.plugins.includes(v) && a.indexOf(v) === i);
 			categories
 				.sort((a, b) => a.category - b.category)
 				.forEach(category => {
@@ -38,11 +39,11 @@ module.exports = class Help extends Command {
 					embed.addField(`${category} [**${length}**]`, commands, false);
 				});
 			message.channel.send(embed);
-		} else if (args.length == 1) {
+		} else if (message.args.length == 1) {
 			// Check if arg is command
-			if (bot.commands.get(args[0]) || bot.commands.get(bot.aliases.get(args[0]))) {
+			if (bot.commands.get(message.args[0]) || bot.commands.get(bot.aliases.get(message.args[0]))) {
 				// arg was a command
-				const cmd = bot.commands.get(args[0]) || bot.commands.get(bot.aliases.get(args[0]));
+				const cmd = bot.commands.get(message.args[0]) || bot.commands.get(bot.aliases.get(message.args[0]));
 				// Check if the command is allowed on the server
 				if (settings.plugins.includes(cmd.help.category) || bot.config.ownerID.includes(message.author.id)) {
 					const embed = new MessageEmbed()
@@ -57,13 +58,13 @@ module.exports = class Help extends Command {
 						].join('\n'));
 					message.channel.send(embed);
 				} else {
-					message.error(settings.Language, 'MISC/NO_COMMAND');
+					message.channel.error(settings.Language, 'MISC/NO_COMMAND');
 				}
 			} else {
-				message.error(settings.Language, 'MISC/NO_COMMAND');
+				message.channel.error(settings.Language, 'MISC/NO_COMMAND');
 			}
 		} else {
-			message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage));
+			message.channel.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage));
 		}
 	}
 };

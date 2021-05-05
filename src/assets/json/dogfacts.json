@@ -1,4 +1,5 @@
-[
+{
+    "facts" : [
     "Puppies love games such as hide and seek! Hide, then call your pup's name so she can try to find you.",
     "Dogs can learn more than 1000 words.",
     "Big happy 'helicopter' tail wagging is one sign of a really nice dog",
@@ -101,4 +102,4 @@
     "Revolutionary War soldiers sometimes brought their dogs with them into battle. Such was the case with George Washington and his dog, Sweetlips.",
     "The American Water Spaniel was the first hunting breed developed to retrieve from boats."
     ]
-    
+}

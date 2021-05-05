@@ -82,11 +82,11 @@ module.exports = class Pokedex extends Command {
 		}
 
 		// Handler: Modifies multi-worded names to conform to API Requirements
-		var pokemon = args.join(' ').toLowerCase()
+		var pokemon = message.args.join(' ').toLowerCase()
 		pokemon = pokemon.replace(/[^A-Z0-9]+/ig, "-")
 		pokemon = pokemon.replace(/\s/g, '');
 
-		console.log(pokemon)
+		//console.log(pokemon)
 
 		// Argument Check
 		if (!pokemon) {

@@ -1,6 +1,6 @@
 // Dependencies
 const { MessageEmbed } = require('discord.js'),
-	{ Warning } = require('../../modules/database/models/index'),
+	{ WarningSchema } = require('../../database/models'),
 	Command = require('../../structures/Command.js');
 
 module.exports = class Warnings extends Command {
@@ -19,30 +19,35 @@ module.exports = class Warnings extends Command {
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
+	async run(bot, message, settings) {
 		// Get user
-		const member = message.guild.getMember(message, args);
+		const member = message.getMember();
 
 		// get warnings of user
 		try {
-			await Warning.findOne({
+			await WarningSchema.find({
 				userID: member[0].id,
 				guildID: message.guild.id,
 			}, (err, warn) => {
-				if(err) console.log(err);
-				if (warn == null) {
+				// if an error occured
+				if (err) {
+					if (message.deletable) message.delete();
+					bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
+					return message.channel.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
+				}
+
+				if (!warn[0]) {
 					// There are no warnings with this user
-					message.sendT(settings.Language, 'MODERATION/NO_WARNINGS').then(m => m.delete({ timeout: 3500 }));
+					message.channel.send(bot.translate(settings.Language, 'MODERATION/NO_WARNINGS')).then(m => m.delete({ timeout: 3500 }));
 				} else {
 					// Warnings have been found
-					let list = `Warnings (${warn.Reason.length}):\n`;
-					let i = 0;
-					while (warn.Reason.length != i) {
-						list += `${i + 1}.) ${warn.Reason[i]} | ${(message.guild.members.cache.get(warn.Moderater[i])) ? message.guild.members.cache.get(warn.Moderater[i]) : 'User left'} (Issue date: ${warn.IssueDates[i]})\n`;
-						i++;
+					let list = `Warnings (${warn.length}):\n`;
+					for (let i = 0; i < warn.length; i++) {
+						list += `${i + 1}.) ${warn[i].Reason} | ${(message.guild.members.cache.get(warn[i].Moderater)) ? message.guild.members.cache.get(warn[i].Moderater) : 'User left'} (Issue date: ${warn[i].IssueDate})\n`;
 					}
+
 					const embed = new MessageEmbed()
-						.setTitle(message.translate(settings.Language, 'MODERATION/WARNS_TITLE', member[0].user.username))
+						.setTitle(bot.translate(settings.Language, 'MODERATION/WARNS_TITLE', member[0].user.username))
 						.setDescription(list)
 						.setTimestamp();
 					message.channel.send(embed);
@@ -51,7 +56,7 @@ module.exports = class Warnings extends Command {
 		} catch (err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
+			message.channel.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

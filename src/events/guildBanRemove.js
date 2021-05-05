@@ -1,22 +1,28 @@
 // Dependencies
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js'),
+	Event = require('../structures/Event');
 
-module.exports = async (bot, guild, user) => {
-	// Get server settings / if no settings then return
-	const settings = guild.settings;
-	if (Object.keys(settings).length == 0) return;
+module.exports = class guildBanRemove extends Event {
+	async run(bot, guild, user) {
+		// For debugging
+		if (bot.config.debug) bot.logger.debug(`Member: ${user.tag} has been unbanned in guild: ${guild.id}.`);
 
-	// Check if event guildBanRemove is for logging
-	if (settings.ModLogEvents.includes('GUILDBANREMOVE') && settings.ModLog) {
-		const embed = new MessageEmbed()
-			.setDescription(`${user.toString()}\n${user.tag}`)
-			.setFooter(`ID: ${user.id}`)
-			.setThumbnail(`${user.displayAvatarURL()}`)
-			.setAuthor('User: Unbanned')
-			.setTimestamp();
+		// Get server settings / if no settings then return
+		const settings = guild.settings;
+		if (Object.keys(settings).length == 0) return;
 
-		// Find channel and send message
-		const modChannel = guild.channels.cache.get(settings.ModLogChannel);
-		if (modChannel) modChannel.send(embed);
+		// Check if event guildBanRemove is for logging
+		if (settings.ModLogEvents.includes('GUILDBANREMOVE') && settings.ModLog) {
+			const embed = new MessageEmbed()
+				.setDescription(`${user.toString()}\n${user.tag}`)
+				.setFooter(`ID: ${user.id}`)
+				.setThumbnail(`${user.displayAvatarURL()}`)
+				.setAuthor('User: Unbanned')
+				.setTimestamp();
+
+			// Find channel and send message
+			const modChannel = guild.channels.cache.get(settings.ModLogChannel);
+			if (modChannel) require('../helpers/webhook-manager')(bot, modChannel.id, embed);
+		}
 	}
 };

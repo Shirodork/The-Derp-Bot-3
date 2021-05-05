@@ -8,18 +8,22 @@ module.exports = class Firstmessage extends Command {
 			name: 'firstmessage',
 			guildOnly: true,
 			dirname: __dirname,
+			aliases: ['firstmsg', 'first-msg'],
 			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
 			description: 'Gets the first message from the channel.',
-			usage: 'firstmessage',
+			usage: 'firstmessage [channel]',
 			cooldown: 2000,
 		});
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
+	async run(bot, message, settings) {
+		// get channel
+		const channel = message.getChannel();
+
 		try {
-			const messages = await message.channel.messages.fetch({ after: 1, limit: 1 });
-			const fMessage = messages.first();
+			// get first message in current channel
+			const fMessage = await channel[0].messages.fetch({ after: 1, limit: 1 }).then(msg => msg.first());
 			const embed = new MessageEmbed()
 				.setColor(fMessage.member ? fMessage.member.displayHexColor : 0x00AE86)
 				.setThumbnail(fMessage.author.displayAvatarURL({ format: 'png', dynamic: true }))
@@ -32,7 +36,7 @@ module.exports = class Firstmessage extends Command {
 		} catch (err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
+			message.channel.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

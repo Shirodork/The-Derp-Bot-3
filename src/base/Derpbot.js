@@ -1,7 +1,6 @@
 // Dependecies
 const { Client, Collection } = require('discord.js'),
-	{ Guild } = require('../modules/database/models'),
-	mongoose = require('mongoose'),
+	{ GuildSchema } = require('../database/models'),
 	GiveawaysManager = require('./giveaway/Manager'),
 	Fortnite = require('fortnite'),
 	{ KSoftClient } = require('@ksoft/api'),
@@ -31,9 +30,10 @@ module.exports = class Derpbot extends Client {
 		// For command handler
 		this.aliases = new Collection();
 		this.commands = new Collection();
+		this.cooldowns = new Collection();
 
 		// connect to database
-		this.mongoose = require('../modules/database/mongoose');
+		this.mongoose = require('../database/mongoose');
 
 		// config file
 		this.config = require('../config.js');
@@ -53,23 +53,35 @@ module.exports = class Derpbot extends Client {
 		this.commandsUsed = 0;
 
 		// for Screenshot command
-		this.adultSiteList = null;
+		this.adultSiteList = [];
 
+		// for time converting and stuff
+		this.timeFormatter = new (require('../utils/timeFormatter'));
+
+		// for webhook
+		this.embedCollection = new Collection();
 	}
 
 	// when the this joins add guild settings to server
 	async CreateGuild(settings) {
-		const merged = Object.assign({ _id: mongoose.Types.ObjectId() }, settings);
-		const newGuild = await new Guild(merged);
-		return newGuild.save();
+		try {
+			const newGuild = new GuildSchema(settings);
+			return await newGuild.save();
+		} catch (err) {
+			if (this.config.debug) this.logger.debug(err.message);
+			return false;
+		}
 	}
 
 	// Delete guild from server when this leaves server
 	async DeleteGuild(guild) {
-		await Guild.findOneAndRemove({ guildID: guild.id }, (err) => {
-			if (err) console.log(err);
-		});
-		return;
+		try {
+			await GuildSchema.findOneAndRemove({ guildID: guild.id });
+			return true;
+		} catch (err) {
+			if (this.config.debug) this.logger.debug(err.message);
+			return false;
+		}
 	}
 
 	// Fetch user ID from discord API
@@ -106,12 +118,12 @@ module.exports = class Derpbot extends Client {
 	}
 
 	// Set this's activity
-	SetActivity(array = [], type = 'PLAYING') {
+	SetActivity(array = [], type) {
 		this.Activity = array;
 		this.PresenceType = type;
 		try {
 			let j = 0;
-			setInterval(() => this.user.setActivity(`${this.Activity[j++ % this.Activity.length]}`, { type: type }), 10000);
+			setInterval(() => this.user.setActivity(`${this.Activity[j++ % this.Activity.length]}`, { type: type, url: 'https://www.twitch.tv/yassuo' }), 10000);
 			return;
 		} catch (e) {
 			console.log(e);
@@ -151,8 +163,31 @@ module.exports = class Derpbot extends Client {
 
 	// Fetches adult sites for screenshot NSFW blocking
 	async fetchAdultSiteList() {
-		const blockedWebsites = require('../assets/json/NSFW_websites.json');
+		const blockedWebsites = require('../assets/json/whitelistWebsiteList.json');
 		this.adultSiteList = blockedWebsites.websites;
 		return this.adultSiteList;
+	}
+
+	// This will get the translation for the provided text
+	translate(language, key, args) {
+		let languageFile;
+		if (key.includes('/')) {
+			const word = key.split('/');
+			languageFile = require(`../languages/${language}/${word[0]}/translation`);
+			return languageFile(word[1], args);
+		} else {
+			languageFile = require(`../languages/${language}/misc`);
+			return languageFile(key, args);
+		}
+	}
+
+	// for adding embeds to the webhook manager
+	addEmbed(channelID, embed) {
+		// collect embeds
+		if (!this.embedCollection.has(channelID)) {
+			this.embedCollection.set(channelID, [embed]);
+		} else {
+			this.embedCollection.set(channelID, [...this.embedCollection.get(channelID), embed]);
+		}
 	}
 };

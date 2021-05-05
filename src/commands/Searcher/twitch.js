@@ -15,14 +15,15 @@ module.exports = class Twitch extends Command {
 			description: 'Get information on a twitch account.',
 			usage: 'twitch <user>',
 			cooldown: 3000,
+			examples: ['twitch ninja'],
 		});
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
+	async run(bot, message, settings) {
 		// Get information on twitch accounts
-		if (!args[0]) return message.channel.send('Please enter a Twitch username');
-		const user = args[0];
+		if (!message.args[0]) return message.channel.send('Please enter a Twitch username');
+		const user = message.args[0];
 
 		// send waiting message
 		const msg = await message.channel.send('Fetching twitch user.');
@@ -56,7 +57,7 @@ module.exports = class Twitch extends Command {
 			if (message.deletable) message.delete();
 			msg.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			message.channel.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 
 		// fetch basic user info (and check that user exists)

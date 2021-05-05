@@ -17,7 +17,7 @@ module.exports = class DadJoke extends Command {
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
+	async run(bot, message, settings) {
 
         // Fetch Dad Joke and convert to JSON
         const dadjoke = await fetch(dadAPI)
@@ -28,10 +28,9 @@ module.exports = class DadJoke extends Command {
 					return message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));	    // Error Message
 				}));
 
-
 		// New Embed
 		const embed = new MessageEmbed()
-			.setTitle(message.translate(settings.Language, 'FUN/DAD_TITLE'))	// Title
+			.setTitle(bot.translate(settings.Language, 'FUN/DAD_TITLE'))	// Title
 			.setColor('RANDOM')													// Color
 			.setDescription(dadjoke.attachments[0].text)									// Grab Chosen Fact
 

@@ -13,35 +13,36 @@ module.exports = class Fortnite extends Command {
 			description: 'Get information on an Instagram account.',
 			usage: 'instagram <user>',
 			cooldown: 3000,
+			examples: ['instagram discord'],
 		});
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
-		const username = args.join(' ');
+	async run(bot, message, settings) {
+		const username = message.args.join(' ');
 
 		// Checks to see if a username was provided
-		if (!username) return message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
+		if (!username) return message.channel.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
 		const r = await message.channel.send('Gathering account details...');
 
 		// Gather data from database
 		const url = `https://instagram.com/${username}/?__a=1`;
 		const res = await fetch(url).then(info => info.json()).catch(err => {
 			// An error occured when looking for account
-			if (bot.config.debug) bot.logger.error(`${err.message} - command: instagram.`);
 			if (message.deletable) message.delete();
-			return message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+			r.delete();
+			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
+			return message.channel.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		});
-		if (!Object.keys(res).length) {
-			r.delete();
-			message.error(settings.Language, 'SEARCHER/UNKNOWN_USER').then(m => m.delete({ timeout: 10000 }));
-			return;
-		}
+
+		// Delete wait message
+		r.delete();
+
+		// make sure there is data
+		if (res.size == 0) return;
+
 		// Checks to see if a username in instagram database
-		if (!res.graphql.user.username) {
-			r.delete();
-			message.error(settings.Language, 'SEARCHER/UNKNOWN_USER').then(m => m.delete({ timeout: 10000 }));
-		}
+		if (!res.graphql.user.username) return message.channel.error(settings.Language, 'SEARCHER/UNKNOWN_USER').then(m => m.delete({ timeout: 10000 }));
 
 		// Displays Data
 		const account = res.graphql.user;
@@ -58,7 +59,6 @@ module.exports = class Fortnite extends Command {
 			.addField('Following:', account.edge_follow.count, true)
 			.addField('Private Account:', account.is_private ? 'Yes :x:' : 'No :white_check_mark:', true)
 			.addField('Verified account:', account.is_verified ? 'Yes' : 'No', true);
-		r.delete();
 		message.channel.send(embed);
 	}
 };

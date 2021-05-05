@@ -16,13 +16,13 @@ module.exports = class Status extends Command {
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
+	async run(bot, message, settings) {
 		// Get information on the services the bot provide
 		const m = await message.channel.send('Pong');
 		const embed = new MessageEmbed()
-			.addField(message.translate(settings.Language, 'MISC/STATUS_PING'), `\`${m.createdTimestamp - message.createdTimestamp}ms\``, true)
-			.addField(message.translate(settings.Language, 'MISC/STATUS_CLIENT'), `\`${Math.round(bot.ws.ping)}ms\``, true)
-			.addField(message.translate(settings.Language, 'MISC/STATUS_MONGO'), `\`${Math.round(await bot.mongoose.ping())}ms\``, true)
+			.addField(bot.translate(settings.Language, 'MISC/STATUS_PING'), `\`${m.createdTimestamp - message.createdTimestamp}ms\``, true)
+			.addField(bot.translate(settings.Language, 'MISC/STATUS_CLIENT'), `\`${Math.round(bot.ws.ping)}ms\``, true)
+			.addField(bot.translate(settings.Language, 'MISC/STATUS_MONGO'), `\`${Math.round(await bot.mongoose.ping())}ms\``, true)
 			.setTimestamp();
 		await message.channel.send(embed);
 		m.delete();

@@ -1,9 +1,10 @@
 // Dependencies
 const Client = require('./base/Derpbot.js');
 require('./structures');
-const bot = new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'], fetchAllMembers: true, ws: { intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_BANS', 'GUILD_EMOJIS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES', 'GUILD_VOICE_STATES'] } });
+const bot = new Client({ partials: ['GUILD_MEMBER', 'USER', 'MESSAGE', 'CHANNEL', 'REACTION'], fetchAllMembers: true, ws: { intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_BANS', 'GUILD_EMOJIS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES', 'GUILD_VOICE_STATES'] } });
 const { promisify } = require('util');
 const readdir = promisify(require('fs').readdir);
+const path = require('path');
 
 // Load commands
 (async () => {
@@ -21,13 +22,21 @@ const readdir = promisify(require('fs').readdir);
 	});
 
 	// load events
-	const evtFiles = await readdir('./src/events/');
-	bot.logger.log(`=-=-=-=-=-=-=- Loading events(s): ${evtFiles.length} -=-=-=-=-=-=-=`);
-	evtFiles.forEach(file => {
-		const eventName = file.split('.')[0];
-		bot.logger.log(`Loading Event: ${eventName}`);
-		const event = require(`./events/${file}`);
-		bot.on(eventName, event.bind(null, bot));
+	const evtFolder = await readdir('./src/events/');
+	bot.logger.log(`=-=-=-=-=-=-=- Loading events(s): ${evtFolder.length} -=-=-=-=-=-=-=`);
+	evtFolder.forEach(async folder => {
+		const folders = await readdir('./src/events/' + folder + '/');
+		folders.forEach(async file => {
+			delete require.cache[file];
+			const { name } = path.parse(file);
+			try {
+				const event = new (require(`./events/${folder}/${file}`))(bot, name);
+				bot.logger.log(`Loading Event: ${name}`);
+				bot.on(name, (...args) => event.run(bot, ...args));
+			} catch (err) {
+				bot.logger.error(`Failed to load Event: ${name} error: ${err.message}`);
+			}
+		});
 	});
 
 	// Audio player
@@ -46,4 +55,11 @@ const readdir = promisify(require('fs').readdir);
 	// Connect bot to discord API
 	const token = bot.config.token;
 	bot.login(token).catch(e => bot.logger.error(e.message));
+
+	process.on('unhandledRejection', err => {
+		bot.logger.error(`Unhandled promise rejection: ${err.message}.`);
+
+		// show full error if debug mode is on
+		if (bot.config.debug) console.log(err);
+	});
 })();

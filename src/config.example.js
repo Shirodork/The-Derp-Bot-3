@@ -27,7 +27,7 @@ const config = {
 		},
 		// https://genius.com/developers
 		genuis: 'genuisAPI-KEY',
-		// https://amethyste.moe/en
+		// https://api.amethyste.moe/
 		amethyste: 'amethysteAPI-Key',
 	},
 	// add plugins/commands here if you don't want them loaded in the bot.
@@ -70,7 +70,7 @@ const config = {
 	},
 	// URL to mongodb
 	MongoDBURl: 'mongodb://link',
-	// if you want debugging turned on or not
+	// This will spam your console if you enable this but will help with bug fixing
 	debug: false,
 };
 

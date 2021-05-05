@@ -17,16 +17,16 @@ module.exports = class Ticket extends Command {
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
+	async run(bot, message, settings) {
 		// Check if bot has permission to add reactions
 		if (!message.channel.permissionsFor(bot.user).has('ADD_REACTIONS')) {
 			bot.logger.error(`Missing permission: \`ADD_REACTIONS\` in [${message.guild.id}].`);
-			return message.error(settings.Language, 'MISSING_PERMISSION', 'ADD_REACTIONS').then(m => m.delete({ timeout: 10000 }));
+			return message.channel.error(settings.Language, 'MISSING_PERMISSION', 'ADD_REACTIONS').then(m => m.delete({ timeout: 10000 }));
 		}
 
 		// Add ticket reaction embed
 		if (message.member.hasPermission('MANAGE_GUILD')) {
-			if (args[0] == 'reaction') {
+			if (message.args[0] == 'reaction') {
 				const embed = new MessageEmbed()
 					.setTitle('React for Ticket channel')
 					.setDescription(`You can react here or use the following command:\n \`${settings.prefix}t-open [reason]\`.`);
@@ -40,7 +40,7 @@ module.exports = class Ticket extends Command {
 					// create collector
 					const collector = msg.createReactionCollector(filter, { time: 604800000 });
 					collector.on('collect', () => {
-						bot.commands.get('ticket-create').run(bot, message, [], settings);
+						bot.commands.get('ticket-create').run(bot, message, settings);
 					});
 				});
 			} else {

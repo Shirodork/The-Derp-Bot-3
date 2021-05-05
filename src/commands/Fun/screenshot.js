@@ -20,37 +20,37 @@ module.exports = class Screenshot extends Command {
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
+	async run(bot, message, settings) {
 		// Make sure bot has permissions to send attachments
 		if (!message.channel.permissionsFor(bot.user).has('ATTACH_FILES')) {
 			bot.logger.error(`Missing permission: \`ATTACH_FILES\` in [${message.guild.id}].`);
-			return message.error(settings.Language, 'MISSING_PERMISSION', 'ATTACH_FILES').then(m => m.delete({ timeout: 10000 }));
+			return message.channel.error(settings.Language, 'MISSING_PERMISSION', 'ATTACH_FILES').then(m => m.delete({ timeout: 10000 }));
 		}
 
 		// make sure a website was entered
-		if (!args[0]) {
+		if (!message.args[0]) {
 			if (message.deletable) message.delete();
-			return message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
+			return message.channel.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
 		}
 
 		// make sure URl is valid
-		if (!validUrl.isUri(args[0])) {
+		if (!validUrl.isUri(message.args[0])) {
 			if (message.deletable) message.delete();
-			return message.error(settings.Language, 'FUN/INVALID_URL').then(m => m.delete({ timeout: 5000 }));
+			return message.channel.error(settings.Language, 'FUN/INVALID_URL').then(m => m.delete({ timeout: 5000 }));
 		}
 
 		// Make sure website is not NSFW in a non-NSFW channel
-		if (bot.adultSiteList.includes(args[0]) && !message.channel.nsfw) {
-			return message.channel.send('You can not view NSFW websites in a non-NSFW channel.').then(m => m.delete({ timeout: 5000 }));
+		if (!bot.adultSiteList.includes(require('url').parse(message.args[0]).host) && !message.channel.nsfw) {
+			return message.channel.error(settings.Language, 'FUN/BLACKLIST_WEBSITE').then(m => m.delete({ timeout: 5000 }));
 		}
 
 		// send 'waiting' message
 		const msg = await message.channel.send('Creating screenshot of website.');
 
 		// try and create screenshot
-		screenshotWebsite(args[0]).then(async data => {
+		screenshotWebsite(message.args[0]).then(async data => {
 			if (!data) {
-				message.error(settings.Language, 'ERROR_MESSAGE', 'Missing data').then(m => m.delete({ timeout: 5000 }));
+				message.channel.error(settings.Language, 'ERROR_MESSAGE', 'Missing data').then(m => m.delete({ timeout: 5000 }));
 			} else {
 				const attachment = new MessageAttachment(data, 'website.png');
 				await message.channel.send(attachment);

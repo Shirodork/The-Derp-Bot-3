@@ -14,8 +14,7 @@ module.exports = class Flip extends Command {
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
-		// Get the random facts file
-		message.sendT(settings.Language, 'FUN/FLIP_CHOICE', Math.round(Math.random()));
+	async run(bot, message, settings) {
+		message.channel.send(bot.translate(settings.Language, 'FUN/FLIP_CHOICE', Math.round(Math.random())));
 	}
 };

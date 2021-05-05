@@ -18,23 +18,23 @@ module.exports = class Twitter extends Command {
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
+	async run(bot, message, settings) {
 		// Get user
-		const member = message.guild.getMember(message, args);
-		if (args.join(' ').replace(/<@.?[0-9]*?>/g, '').length == args.length) args.shift();
+		const member = message.getMember();
+		if (message.args.join(' ').replace(/<@.?[0-9]*?>/g, '').length == message.args.length) message.args.shift();
 
 		// Get text
-		let text = args.join(' ');
+		let text = message.args.join(' ');
 		text = text.replace(/<@.?[0-9]*?>/g, '');
 
 		// make sure text was entered
-		if (args.length == 0) return message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
+		if (message.args.length == 0) return message.channel.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
 
 		// make sure the text isn't longer than 60 characters
-		if (text.length >= 61) return message.error(settings.Language, 'IMAGE/TEXT_OVERLOAD', 60).then(m => m.delete({ timeout: 5000 }));
+		if (text.length >= 61) return message.channel.error(settings.Language, 'IMAGE/TEXT_OVERLOAD', 60).then(m => m.delete({ timeout: 5000 }));
 
 		// send 'waiting' message
-		const msg = await message.sendT(settings.Language, 'IMAGE/GENERATING_IMAGE');
+		const msg = await message.channel.send(bot.translate(settings.Language, 'IMAGE/GENERATING_IMAGE'));
 
 		// Try and convert image
 		try {
@@ -48,7 +48,7 @@ module.exports = class Twitter extends Command {
 		} catch(err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
+			message.channel.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

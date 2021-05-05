@@ -15,8 +15,8 @@ module.exports = class Privacy extends Command {
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
+	async run(bot, message, settings) {
 		// Send link to privacy policy
-		message.channel.send({ embed:{ description:`[${message.translate(settings.Language, 'MISC/PRIVACY_POLICY')}](https://github.com/Spiderjockey02/Discord-Bot/blob/master/docs/PRIVACY.md)` } });
+		message.channel.send({ embed:{ description:`[${bot.translate(settings.Language, 'MISC/PRIVACY_POLICY')}](https://github.com/Spiderjockey02/Discord-Bot/blob/master/docs/PRIVACY.md)` } });
 	}
 };

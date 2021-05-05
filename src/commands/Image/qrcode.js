@@ -17,13 +17,12 @@ module.exports = class QRcode extends Command {
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
+	async run(bot, message, settings) {
 		// Get text for QR encoding (including file URl)
-		let text = args.join(' ');
-		if (!text) text = message.guild.GetImage(message, args, settings.Language);
+		const text = (!message.args[0]) ? message.GetImage(message, message.args, settings.Language)[0] : message.args.join(' ');
 
 		// send 'waiting' message
-		const msg = await message.sendT(settings.Language, 'IMAGE/GENERATING_IMAGE');
+		const msg = await message.channel.send(bot.translate(settings.Language, 'IMAGE/GENERATING_IMAGE'));
 
 		// Try and convert image
 		try {
@@ -35,7 +34,7 @@ module.exports = class QRcode extends Command {
 		} catch(err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
+			message.channel.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

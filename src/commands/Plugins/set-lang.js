@@ -25,30 +25,30 @@ module.exports = class Setlang extends Command {
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
+	async run(bot, message, settings) {
 		// Delete message
 		if (settings.ModerationClearToggle & message.deletable) message.delete();
 
 		// Make sure user can edit server plugins
-		if (!message.member.hasPermission('MANAGE_GUILD')) return message.error(settings.Language, 'USER_PERMISSION', 'BAN_MEMBERS').then(m => m.delete({ timeout: 10000 }));
+		if (!message.member.hasPermission('MANAGE_GUILD')) return message.channel.error(settings.Language, 'USER_PERMISSION', 'MANAGE_GUILD').then(m => m.delete({ timeout: 10000 }));
 
 		// Make sure a language was entered
-		if (!args[0]) return message.error(settings.Language, 'PLUGINS/MISSING_LANGUAGE').then(m => m.delete({ timeout:10000 }));
+		if (!message.args[0]) return message.channel.error(settings.Language, 'PLUGINS/MISSING_LANGUAGE').then(m => m.delete({ timeout:10000 }));
 
 		// Check what language
-		if (languages[args[0].toLowerCase()]) {
+		if (languages[message.args[0].toLowerCase()]) {
 			try {
 				// update database
-				await message.guild.updateGuild({ Language: languages[args[0].toLowerCase()] });
-				settings.Language = languages[args[0].toLowerCase()];
-				message.success(settings.Language, 'PLUGINS/LANGUAGE_SET', args[0]).then(m => m.delete({ timeout:10000 }));
+				await message.guild.updateGuild({ Language: languages[message.args[0].toLowerCase()] });
+				settings.Language = languages[message.args[0].toLowerCase()];
+				message.channel.success(settings.Language, 'PLUGINS/LANGUAGE_SET', message.args[0]).then(m => m.delete({ timeout:10000 }));
 			} catch (err) {
 				if (message.deletable) message.delete();
 				bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-				message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+				message.channel.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 			}
 		} else {
-			message.error(settings.Language, 'PLUGINS/NO_LANGUAGE').then(m => m.delete({ timeout:10000 }));
+			message.channel.error(settings.Language, 'PLUGINS/NO_LANGUAGE').then(m => m.delete({ timeout:10000 }));
 		}
 	}
 };

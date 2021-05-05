@@ -1,5 +1,5 @@
 // Dependencies
-const { Warning } = require('../../modules/database/models/index'),
+const { WarningSchema } = require('../../database/models'),
 	Command = require('../../structures/Command.js');
 
 module.exports = class ClearWarning extends Command {
@@ -12,44 +12,43 @@ module.exports = class ClearWarning extends Command {
 			userPermissions: ['KICK_MEMBERS'],
 			botPermissions: [ 'SEND_MESSAGES', 'EMBED_LINKS'],
 			description: 'Remove warnings from a user.',
-			usage: 'clear-warning <user>',
+			usage: 'clear-warning <user> [warning number]',
 			cooldown: 5000,
 			examples: ['clear-warning username'],
 		});
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
+	async run(bot, message, settings) {
 		// Delete message
 		if (settings.ModerationClearToggle & message.deletable) message.delete();
 
 		// Check to see if user can kick members
-		if (!message.member.hasPermission('KICK_MEMBERS')) return message.error(settings.Language, 'USER_PERMISSION', 'KICK_MEMBERS').then(m => m.delete({ timeout: 10000 }));
+		if (!message.member.hasPermission('KICK_MEMBERS')) return message.channel.error(settings.Language, 'USER_PERMISSION', 'KICK_MEMBERS').then(m => m.delete({ timeout: 10000 }));
 
 		// Get user
-		const member = message.guild.getMember(message, args);
+		const member = message.getMember();
 
 		// get warnings of user
 		try {
 			// find data
-			const data = await Warning.findOne({
-				userID: member[0].id,
+			const warns = await WarningSchema.find({
+				userID: member[0].user.id,
 				guildID: message.guild.id,
 			});
 
-			// Delete the data
-			if (data) {
-				await Warning.deleteOne(data, function(err) {
-					if (err) throw err;
-				});
-				message.success(settings.Language, 'MODERATION/CLEARED_WARNINGS', member[0]).then(m => m.delete({ timeout: 10000 }));
+			// check if a warning number was entered
+			if (message.args[1] - 1 <= warns.length) {
+				// Delete item from database as bot didn't crash
+				await WarningSchema.findByIdAndRemove(warns[message.args[1] - 1]._id);
 			} else {
-				message.sendT(settings.Language, 'MODERATION/NO_WARNINGS').then(m => m.delete({ timeout: 3500 }));
+				await WarningSchema.deleteMany({ userID: member[0].user.id, guildID: message.guild.id });
 			}
+			message.channel.send(`warnings updated for ${member[0]}`);
 		} catch (err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
+			message.channel.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };

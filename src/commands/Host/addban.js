@@ -1,5 +1,5 @@
 // Dependencies
-const { Globalban } = require('../../modules/database/models'),
+const { GlobalBanSchema } = require('../../database/models'),
 	{ MessageEmbed } = require('discord.js'),
 	Command = require('../../structures/Command.js');
 
@@ -18,25 +18,25 @@ module.exports = class Addban extends Command {
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
-		if (!args[0]) return message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
+	async run(bot, message, settings) {
+		if (!message.args[0]) return message.channel.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
 
 		// get information
-		const user = await bot.getUser(args[0]);
-		const restriction = args[1];
-		if (!['servers', 'commands'].includes(restriction)) return message.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
-		args.splice(0, 2);
-		const reason = (args[0]) ? args.join(' ') : message.translate(settings.Language, 'NO_REASON');
+		const user = await bot.getUser(message.args[0]);
+		const restriction = message.args[1];
+		if (!['servers', 'commands'].includes(restriction)) return message.channel.error(settings.Language, 'INCORRECT_FORMAT', settings.prefix.concat(this.help.usage)).then(m => m.delete({ timeout: 5000 }));
+		message.args.splice(0, 2);
+		const reason = (message.args[0]) ? message.args.join(' ') : bot.translate(settings.Language, 'NO_REASON');
 
 		// update database
-		Globalban.findOne({
+		GlobalBanSchema.findOne({
 			userID: user.id,
 		}, async (err, res) => {
 			if (err) bot.logger.error(err.message);
 
 			// This is their first warning
 			if (!res) {
-				const newBan = new Globalban({
+				const newBan = new GlobalBanSchema({
 					userID: user.id,
 					reason: reason,
 					restriction: restriction,

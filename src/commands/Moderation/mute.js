@@ -1,5 +1,6 @@
 // Dependencies
-const	Command = require('../../structures/Command.js');
+const { timeEventSchema } = require('../../database/models'),
+	Command = require('../../structures/Command.js');
 
 module.exports = class Mute extends Command {
 	constructor(bot) {
@@ -17,21 +18,21 @@ module.exports = class Mute extends Command {
 	}
 
 	// Run command
-	async run(bot, message, args, settings) {
+	async run(bot, message, settings) {
 		// Delete message
 		if (settings.ModerationClearToggle & message.deletable) message.delete();
 
 		// Check if user can mute users
-		if (!message.member.hasPermission('MUTE_MEMBERS')) return message.error(settings.Language, 'USER_PERMISSION', 'MUTE_MEMBERS').then(m => m.delete({ timeout: 10000 }));
+		if (!message.member.hasPermission('MUTE_MEMBERS')) return message.channel.error(settings.Language, 'USER_PERMISSION', 'MUTE_MEMBERS').then(m => m.delete({ timeout: 10000 }));
 
 		// check if bot can add 'mute' role to user
 		if (!message.guild.me.hasPermission('MANAGE_ROLES')) {
 			bot.logger.error(`Missing permission: \`MANAGE_ROLES\` in [${message.guild.id}].`);
-			return message.error(settings.Language, 'MISSING_PERMISSION', 'MANAGE_ROLES').then(m => m.delete({ timeout: 10000 }));
+			return message.channel.error(settings.Language, 'MISSING_PERMISSION', 'MANAGE_ROLES').then(m => m.delete({ timeout: 10000 }));
 		}
 
 		// add user to role (if no role, make role)
-		const member = message.guild.getMember(message, args);
+		const member = message.getMember();
 
 		// Get the channel the member is in
 		const channel = message.guild.channels.cache.get(member[0].voice.channelID);
@@ -39,16 +40,16 @@ module.exports = class Mute extends Command {
 			// Make sure bot can deafen members
 			if (!channel.permissionsFor(bot.user).has('MUTE_MEMBERS')) {
 				bot.logger.error(`Missing permission: \`MUTE_MEMBERS\` in [${message.guild.id}].`);
-				return message.error(settings.Language, 'MISSING_PERMISSION', 'MUTE_MEMBERS').then(m => m.delete({ timeout: 10000 }));
+				return message.channel.error(settings.Language, 'MISSING_PERMISSION', 'MUTE_MEMBERS').then(m => m.delete({ timeout: 10000 }));
 			}
 		}
 
 
 		// Make sure user isn't trying to punish themselves
-		if (member[0].user.id == message.author.id) return message.error(settings.Language, 'MODERATION/SELF_PUNISHMENT').then(m => m.delete({ timeout: 10000 }));
+		if (member[0].user.id == message.author.id) return message.channel.error(settings.Language, 'MODERATION/SELF_PUNISHMENT').then(m => m.delete({ timeout: 10000 }));
 
 		// get mute role
-		let muteRole = message.guild.roles.cache.find(role => role.id == settings.MutedRole);
+		let muteRole = message.guild.roles.cache.get(settings.MutedRole);
 		// If role not found then make role
 		if (!muteRole) {
 			try {
@@ -65,7 +66,7 @@ module.exports = class Mute extends Command {
 			} catch (err) {
 				if (message.deletable) message.delete();
 				bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-				message.error(settings.Language, 'ERROR_MESSAGE').then(m => m.delete({ timeout: 5000 }));
+				message.channel.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 			}
 		}
 
@@ -78,25 +79,43 @@ module.exports = class Mute extends Command {
 					try {
 						await member[0].voice.setMute(true);
 					} catch (err) {
-						if (bot.config.debug) bot.logger.error(`${err.message} - command: mute {1}.`);
+						if (bot.config.debug) bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
 					}
 				}
+
 				// reply to user
-				message.success(settings.Language, 'MODERATION/SUCCESSFULL_MUTE', member[0].user).then(m => m.delete({ timeout: 3000 }));
+				message.channel.success(settings.Language, 'MODERATION/SUCCESSFULL_MUTE', member[0].user).then(m => m.delete({ timeout: 3000 }));
 				// see if it was a tempmute
-				if (args[1]) {
-					const time = require('../../helpers/time-converter.js').getTotalTime(args[1], message, settings.Language);
+				if (message.args[1]) {
+					const time = bot.timeFormatter.getTotalTime(message.args[1], message, settings.Language);
 					if (!time) return;
+
+					// connect to database
+					const newEvent = await new timeEventSchema({
+						userID: member[0].user.id,
+						guildID: message.guild.id,
+						time: new Date(new Date().getTime() + time),
+						channelID: message.channel.id,
+						roleID: muteRole.id,
+						type: 'mute',
+					});
+					await newEvent.save();
+
+					// remove mute role from user
 					setTimeout(async () => {
-						member[0].roles.remove(muteRole, 'Temporary mute expired.');
-						await member[0].voice.setMute(false).catch(err => bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`));
+						bot.commands.get('unmute').run(bot, message, settings);
+
+						// Delete item from database as bot didn't crash
+						await timeEventSchema.findByIdAndRemove(newEvent._id, (err) => {
+							if (err) console.log(err);
+						});
 					}, time);
 				}
 			});
 		} catch (err) {
 			if (message.deletable) message.delete();
 			bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);
-			message.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
+			message.channel.error(settings.Language, 'ERROR_MESSAGE', err.message).then(m => m.delete({ timeout: 5000 }));
 		}
 	}
 };
