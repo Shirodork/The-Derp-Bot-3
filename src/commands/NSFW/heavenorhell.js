@@ -220,7 +220,7 @@ module.exports = class heavenorhell1 extends Command {
 		const data = await fetch(`https://www.reddit.com/r/${subreddit}.json?sort=top&t=week`)
 			.then(res => res.json()
 				.catch((err) => {
-					// No Pokemon/Error
+					
 					if (message.deletable) message.delete();																// Delete User Message
 					bot.logger.error(`Command: '${this.help.name}' has error: ${err.message}.`);							// Log Error in console
 					return message.error(settings.Language, 'FUN/MISSING_POKEMON').then(m => m.delete({ timeout: 5000 }));	// Error Message

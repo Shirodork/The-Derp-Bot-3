@@ -1,5 +1,7 @@
 // Dependencies
-const { MessageEmbed, version } = require('discord.js'),
+const { version } = require('discord.js'),
+	{ Embed } = require('../../utils'),
+	{ time: { getReadableTime } } = require('../../utils'),
 	Command = require('../../structures/Command.js');
 
 module.exports = class About extends Command {
@@ -17,7 +19,7 @@ module.exports = class About extends Command {
 
 	// Run command
 	async run(bot, message, settings) {
-		const embed = new MessageEmbed()
+		const embed = new Embed(bot, message.guild)
 			.setAuthor(bot.user.username, bot.user.displayAvatarURL())
 			.setTitle('About')
 			.setDescription(`- [Dashboard](${bot.config.websiteURL})

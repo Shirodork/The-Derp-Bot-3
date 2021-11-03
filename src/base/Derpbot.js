@@ -6,12 +6,12 @@ const { Client, Collection } = require('discord.js'),
 	{ KSoftClient } = require('@ksoft/api'),
 	path = require('path');
 
-// Creates Derpbot class
-module.exports = class Derpbot extends Client {
+// Creates DerpBot class
+module.exports = class DerpBot extends Client {
 	constructor(options) {
 		super(options);
 		// for console logging
-		this.logger = require('../utils/logger');
+		this.logger = require('../utils/Logger');
 
 		// Giveaway manager
 		this.giveawaysManager = new GiveawaysManager(this, {
@@ -43,10 +43,14 @@ module.exports = class Derpbot extends Client {
 		this.PresenceType = 'PLAYING';
 
 		// for KSOFT API
-		this.Ksoft = new KSoftClient(this.config.api_keys.ksoft);
+		if (this.config.api_keys.ksoft) {
+			this.Ksoft = new KSoftClient(this.config.api_keys.ksoft);
+		}
 
 		// for Fortnite API
-		this.Fortnite = new Fortnite(this.config.api_keys.fortnite);
+		if (this.config.api_keys.fortnite) {
+			this.Fortnite = new Fortnite(this.config.api_keys.fortnite);
+		}
 
 		// Basic statistics for the bot
 		this.messagesSent = 0;
@@ -55,14 +59,20 @@ module.exports = class Derpbot extends Client {
 		// for Screenshot command
 		this.adultSiteList = [];
 
-		// for time converting and stuff
-		this.timeFormatter = new (require('../utils/timeFormatter'));
-
 		// for webhook
 		this.embedCollection = new Collection();
+
+		// for emojis
+		this.customEmojis = require('../assets/json/emojis.json');
+
+		// for language translation
+		this.languages = require('../languages/language-meta.json');
+
+		// for waiting for things
+		this.delay = ms => new Promise(res => setTimeout(res, ms));
 	}
 
-	// when the this joins add guild settings to server
+	// when the bot joins create guild settings
 	async CreateGuild(settings) {
 		try {
 			const newGuild = new GuildSchema(settings);
@@ -73,7 +83,7 @@ module.exports = class Derpbot extends Client {
 		}
 	}
 
-	// Delete guild from server when this leaves server
+	// Delete guild from server when bot leaves server
 	async DeleteGuild(guild) {
 		try {
 			await GuildSchema.findOneAndRemove({ guildID: guild.id });
@@ -84,40 +94,7 @@ module.exports = class Derpbot extends Client {
 		}
 	}
 
-	// Fetch user ID from discord API
-	async getUser(ID) {
-		try {
-			const user = await this.users.fetch(ID);
-			return user;
-		} catch (err) {
-			console.log(err.message);
-			return false;
-		}
-	}
-
-	// Get a channel in cache
-	async getChannel(id) {
-		try {
-			const channel = await this.channels.cache.get(id);
-			return channel;
-		} catch (err) {
-			console.log(err.message);
-			return false;
-		}
-	}
-
-	// Set this's status
-	async SetStatus(status = 'online') {
-		try {
-			await this.user.setStatus(status);
-			return;
-		} catch (err) {
-			console.log(err.message);
-			return false;
-		}
-	}
-
-	// Set this's activity
+	// Set bot's activity
 	SetActivity(array = [], type) {
 		this.Activity = array;
 		this.PresenceType = type;
@@ -136,7 +113,6 @@ module.exports = class Derpbot extends Client {
 			const cmd = new (require(`.${commandPath}${path.sep}${commandName}`))(this);
 			this.logger.log(`Loading Command: ${cmd.help.name}.`);
 			cmd.conf.location = commandPath;
-			if (cmd.init) cmd.init(this);
 			this.commands.set(cmd.help.name, cmd);
 			cmd.help.aliases.forEach((alias) => {
 				this.aliases.set(alias, cmd.help.name);
@@ -155,8 +131,7 @@ module.exports = class Derpbot extends Client {
 		} else if (this.aliases.has(commandName)) {
 			command = this.commands.get(this.aliases.get(commandName));
 		}
-		if(!command) return `The command \`${commandName}\` doesn't seem to exist, nor is it an alias. Try again!`;
-		if(command.shutdown) await command.shutdown(this);
+		if (!command) return `The command \`${commandName}\` doesn't seem to exist, nor is it an alias. Try again!`;
 		delete require.cache[require.resolve(`.${commandPath}${path.sep}${commandName}.js`)];
 		return false;
 	}
@@ -169,16 +144,11 @@ module.exports = class Derpbot extends Client {
 	}
 
 	// This will get the translation for the provided text
-	translate(language, key, args) {
-		let languageFile;
-		if (key.includes('/')) {
-			const word = key.split('/');
-			languageFile = require(`../languages/${language}/${word[0]}/translation`);
-			return languageFile(word[1], args);
-		} else {
-			languageFile = require(`../languages/${language}/misc`);
-			return languageFile(key, args);
-		}
+	translate(key, args, locale) {
+		if (!locale) locale = this.config.defaultSettings.Language;
+		const language = this.translations.get(locale);
+		if (!language) throw 'Invalid language set in data.';
+		return language(key, args);
 	}
 
 	// for adding embeds to the webhook manager

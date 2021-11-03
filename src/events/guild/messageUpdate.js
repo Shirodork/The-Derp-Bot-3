@@ -1,5 +1,5 @@
 // Dependencies
-const { MessageEmbed } = require('discord.js'),
+const { Embed } = require('../../utils'),
 	Event = require('../../structures/Event');
 
 module.exports = class messageUpdate extends Event {
@@ -18,11 +18,15 @@ module.exports = class messageUpdate extends Event {
 		if (!newMessage.guild) return;
 
 		// Check if message is a partial
-		if (oldMessage.partial) await oldMessage.fetch();
-		if (newMessage.partial) await newMessage.fetch();
+		try {
+			if (oldMessage.partial) await oldMessage.fetch();
+			if (newMessage.partial) await newMessage.fetch();
+		} catch (err) {
+			return bot.logger.error(`Event: '${this.conf.name}' has error: ${err.message}.`);
+		}
 
 		// only check for message content is different
-		if (oldMessage.content == newMessage.content) return;
+		if (oldMessage.content == newMessage.content || !newMessage.content || !oldMessage.content) return;
 
 		// Get server settings / if no settings then return
 		const settings = newMessage.guild.settings;
@@ -43,7 +47,7 @@ module.exports = class messageUpdate extends Event {
 				newContent = newContent.slice(0, 1020) + '...';
 				newShortened = true;
 			}
-			const embed = new MessageEmbed()
+			const embed = new Embed(bot, newMessage.guild)
 				.setDescription(`**Message of ${newMessage.author.toString()} edited in ${newMessage.channel.toString()}** [Jump to Message](${newMessage.url})`)
 				.setFooter(`Author: ${newMessage.author.id} | Message: ${newMessage.id}`)
 				.setAuthor(newMessage.author.tag, newMessage.author.displayAvatarURL())

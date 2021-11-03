@@ -1,5 +1,5 @@
 // Dependencies
-const { MessageEmbed } = require('discord.js'),
+const { Embed } = require('../../utils'),
 	Event = require('../../structures/Event');
 
 module.exports = class messageReactionRemove extends Event {
@@ -19,8 +19,15 @@ module.exports = class messageReactionRemove extends Event {
 		if (!reaction.message.guild) return;
 
 		// If reaction needs to be fetched
-		if (reaction.message.partial) await reaction.message.fetch();
-		if (reaction.partial) await reaction.fetch();
+		try {
+			if (reaction.partial) await reaction.fetch();
+			if (reaction.message.partial) await reaction.message.fetch();
+		} catch (err) {
+			return bot.logger.error(`Event: '${this.conf.name}' has error: ${err.message}.`);
+		}
+
+		// make sure the message author isn't the bot
+		if (reaction.message.author.id == bot.user.id) return;
 
 		// Get server settings / if no settings then return
 		const settings = reaction.message.guild.settings;
@@ -28,7 +35,7 @@ module.exports = class messageReactionRemove extends Event {
 
 		// Check if event messageReactionRemove is for logging
 		if (settings.ModLogEvents.includes('MESSAGEREACTIONREMOVE') && settings.ModLog) {
-			const embed = new MessageEmbed()
+			const embed = new Embed(bot, reaction.message.guild)
 				.setDescription(`**${user.toString()} unreacted with ${reaction.emoji.toString()} to [this message](${reaction.message.url})** `)
 				.setColor(15158332)
 				.setFooter(`User: ${user.id} | Message: ${reaction.message.id} `)

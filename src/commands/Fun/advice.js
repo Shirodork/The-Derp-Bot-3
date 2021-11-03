@@ -8,9 +8,10 @@ module.exports = class Advice extends Command {
 			name: 'advice',
 			dirname: __dirname,
 			botPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
-			description: 'Get some random advice',
+			description: 'Get some random advice from the bot!',
 			usage: 'advice',
 			cooldown: 1000,
+			examples: ['advice'],
 		});
 	}
 

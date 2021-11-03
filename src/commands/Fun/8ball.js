@@ -14,6 +14,7 @@ module.exports = class EightBall extends Command {
 			description: 'Consult the wisdom of 8-Ball',
 			usage: '8-ball <question>',
 			cooldown: 1000,
+			examples: ['8ball Will I ace this test?', '8ball Am I Amazing?'],
 		});
 	}
 

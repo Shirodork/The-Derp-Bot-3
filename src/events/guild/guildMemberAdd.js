@@ -1,5 +1,6 @@
 // Dependencies
-const { MessageEmbed } = require('discord.js'),
+const { Embed } = require('../../utils'),
+	{ MutedMemberSchema } = require('../../database/models'),
 	Event = require('../../structures/Event');
 
 module.exports = class guildMemberAdd extends Event {
@@ -22,7 +23,7 @@ module.exports = class guildMemberAdd extends Event {
 
 		// Check if event guildMemberAdd is for logging
 		if (settings.ModLogEvents.includes('GUILDMEMBERADD') && settings.ModLog) {
-			const embed = new MessageEmbed()
+			const embed = new Embed(bot, member.guild)
 				.setDescription(`${member.toString()}\nMember count: ${member.guild.memberCount}`)
 				.setColor(3066993)
 				.setFooter(`ID: ${member.id}`)
@@ -47,7 +48,22 @@ module.exports = class guildMemberAdd extends Event {
 			if (settings.welcomePrivateToggle) member.send(settings.welcomePrivateText.replace('{user}', member.user).replace('{server}', member.guild.name)).catch(e => bot.logger.error(e.message));
 
 			// Add role to user
-			if (settings.welcomeRoleToggle) member.roles.add(settings.welcomeRoleGive);
+			try {
+				if (settings.welcomeRoleToggle) await member.roles.add(settings.welcomeRoleGive);
+			} catch (err) {
+				console.log(settings.welcomeRoleGive);
+				bot.logger.error(`Event: '${this.conf.name}' has error: ${err.message}.`);
+			}
+		}
+
+		// Check if member is trying to mute evade
+		const muteOrNot = await MutedMemberSchema.findOne({ userID: member.user.id, guildID: member.guild.id });
+		if (muteOrNot) {
+			try {
+				await member.roles.add(settings.MutedRole);
+			} catch (err) {
+				bot.logger.error(`Event: '${this.conf.name}' has error: ${err.message}.`);
+			}
 		}
 	}
 };

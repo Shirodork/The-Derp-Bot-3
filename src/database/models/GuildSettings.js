@@ -1,9 +1,9 @@
 const { Schema, model } = require('mongoose');
 
-const guildScheme = Schema({
+const guildSchema = Schema({
 	guildID: String,
 	guildName: String,
-	prefix: { type: String, default: 'e!' },
+	prefix: { type: String, default: require('../../config.js').defaultSettings.prefix },
 	// Welcome Plugin
 	welcomePlugin: { type: Boolean, default: false },
 	// if anti-raid is true and welcome plugin is true both will get activated so this will make sure anti-riad runs first and once 'accepeted' welcome plugn will run
@@ -117,4 +117,4 @@ const guildScheme = Schema({
 	version: { type: Number, default: '1.1' },
 });
 
-module.exports = model('Guild', guildScheme);
+module.exports = model('Guild', guildSchema);
