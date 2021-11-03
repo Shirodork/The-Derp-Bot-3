@@ -1,5 +1,6 @@
 // Dependencies
-const { MessageEmbed } = require('discord.js'),
+const { Embed } = require('../../utils'),
+	{ ReactionRoleSchema, GiveawaySchema, ticketEmbedSchema } = require('../../database/models'),
 	Event = require('../../structures/Event');
 
 module.exports = class messageDelete extends Event {
@@ -26,6 +27,26 @@ module.exports = class messageDelete extends Event {
 		// make sure it wasn't a webhook message
 		if (message.webhookID) return;
 
+		// Check if the message was a giveaway/reaction role embed
+		try {
+			// check reaction roles
+			const rr = await ReactionRoleSchema.findOneAndRemove({ messageID: message.id,	channelID: message.channel.id });
+			if (rr) bot.logger.log('A reaction role embed was deleted.');
+
+			// check giveaways
+			const g = await GiveawaySchema.findOneAndRemove({ messageID: message.id,	channelID: message.channel.id });
+			if (g) {
+				await bot.giveawaysManager.delete(message.id);
+				bot.logger.log('A giveaway embed was deleted.');
+			}
+
+			// check ticket embed
+			const te = await ticketEmbedSchema.findOneAndRemove({ messageID: message.id,	channelID: message.channel.id });
+			if (te) bot.logger.log('A ticket reaction embed was deleted.');
+		} catch (err) {
+			bot.logger.error(`Event: '${this.conf.name}' has error: ${err.message}.`);
+		}
+
 		// Make sure its not the bot
 		if (message.author.id == bot.user.id) return;
 
@@ -47,7 +68,7 @@ module.exports = class messageDelete extends Event {
 			}
 
 			// Basic message construct
-			const embed = new MessageEmbed()
+			const embed = new Embed(bot, message.guild)
 				.setDescription(`**Message from ${message.author.toString()} deleted in ${message.channel.toString()}**`)
 				.setColor(15158332)
 				.setFooter(`Author: ${message.author.id} | Message: ${message.id}`)

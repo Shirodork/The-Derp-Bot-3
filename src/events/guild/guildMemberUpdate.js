@@ -1,5 +1,5 @@
 // Dependencies
-const { MessageEmbed } = require('discord.js'),
+const { Embed } = require('../../utils'),
 	Event = require('../../structures/Event');
 
 module.exports = class guildMemberUpdate extends Event {
@@ -16,6 +16,9 @@ module.exports = class guildMemberUpdate extends Event {
 
 		if (oldMember.user.id == bot.user.id) return;
 
+		// if the oldMember is not cached ignore.
+		if (oldMember.partial) return;
+
 		// get server settings
 		const settings = newMember.guild.settings;
 		if (Object.keys(settings).length == 0) return;
@@ -26,7 +29,7 @@ module.exports = class guildMemberUpdate extends Event {
 
 			// nickname change
 			if (oldMember.nickname != newMember.nickname) {
-				embed = new MessageEmbed()
+				embed = new Embed(bot, newMember.guild)
 					.setDescription(`**${newMember.toString()} nickname changed**`)
 					.setFooter(`ID: ${newMember.id}`)
 					.setAuthor(newMember.user.tag, newMember.user.displayAvatarURL())
@@ -39,8 +42,8 @@ module.exports = class guildMemberUpdate extends Event {
 
 			// Look to see if user has boosted the server
 			if (!oldMember.premiumSince && newMember.premiumSince) {
-				embed = new MessageEmbed()
-					.seDescripition(`**${newMember.toString()} has boosted the server**`)
+				embed = new Embed(bot, newMember.guild)
+					.setDescription(`**${newMember.toString()} has boosted the server**`)
 					.setFooter(`ID: ${newMember.id}`)
 					.setAuthor(newMember.user.tag, newMember.user.displayAvatarURL())
 					.setTimestamp();
@@ -49,8 +52,8 @@ module.exports = class guildMemberUpdate extends Event {
 
 			// Look to see if user has stopped boosted the server
 			if (oldMember.premiumSince && !newMember.premiumSince) {
-				embed = new MessageEmbed()
-					.seDescripition(`**${newMember.toString()} has unboosted the server**`)
+				embed = new Embed(bot, newMember.guild)
+					.setDescription(`**${newMember.toString()} has unboosted the server**`)
 					.setFooter(`ID: ${newMember.id}`)
 					.setAuthor(newMember.user.tag, newMember.user.displayAvatarURL())
 					.setTimestamp();
@@ -59,7 +62,7 @@ module.exports = class guildMemberUpdate extends Event {
 
 			// Look to see if user has changed their surname
 			if (oldMember.username !== newMember.username) {
-				embed = new MessageEmbed()
+				embed = new Embed(bot, newMember.guild)
 					.setDescription(`**username changed of ${newMember.toString()}**`)
 					.setColor(15105570)
 					.setFooter(`ID: ${newMember.id}`)
@@ -76,21 +79,21 @@ module.exports = class guildMemberUpdate extends Event {
 			const rolesAdded = newMember.roles.cache.filter(x => !oldMember.roles.cache.get(x.id));
 			const rolesRemoved = oldMember.roles.cache.filter(x => !newMember.roles.cache.get(x.id));
 			if (rolesAdded.size != 0 || rolesRemoved.size != 0) {
-				let roleAddedString = '';
+				const roleAddedString = [];
 				for (const role of rolesAdded.array()) {
-					roleAddedString += role.toString();
+					roleAddedString.push(role.toString());
 				}
-				let roleRemovedString = '';
+				const roleRemovedString = [];
 				for (const role of rolesRemoved.array()) {
-					roleRemovedString += role.toString();
+					roleRemovedString.push(role.toString());
 				}
-				embed = new MessageEmbed()
+				embed = new Embed(bot, newMember.guild)
 					.setDescription(`**${newMember.toString()} roles changed**`)
 					.setFooter(`ID: ${newMember.id}`)
 					.setAuthor(newMember.user.tag, newMember.user.displayAvatarURL())
 					.addFields(
-						{ name: `Added role [${rolesAdded.size}]:`, value: `${roleAddedString.length == 0 ? '*None*' : roleAddedString}`, inline: true },
-						{ name: `Removed Roles [${rolesRemoved.size}]:`, value: `${roleRemovedString.length == 0 ? '*None*' : roleRemovedString}`, inline: true })
+						{ name: `Added roles [${rolesAdded.size}]:`, value: `${roleAddedString.length == 0 ? '*None*' : roleAddedString.join('\n ')}`, inline: true },
+						{ name: `Removed Roles [${rolesRemoved.size}]:`, value: `${roleRemovedString.length == 0 ? '*None*' : roleRemovedString.join('\n ')}`, inline: true })
 					.setTimestamp();
 				updated = true;
 			}

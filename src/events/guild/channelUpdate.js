@@ -1,5 +1,5 @@
 // Dependencies
-const { MessageEmbed } = require('discord.js'),
+const { Embed } = require('../../utils'),
 	Event = require('../../structures/Event');
 
 module.exports = class channelUpdate extends Event {
@@ -24,7 +24,7 @@ module.exports = class channelUpdate extends Event {
 
 			// Channel name change
 			if (oldChannel.name != newChannel.name) {
-				embed = new MessageEmbed()
+				embed = new Embed(bot, newChannel.guild)
 					.setDescription(`**${newChannel.type === 'category' ? 'Category' : 'Channel'} name changed of ${newChannel.toString()}**`)
 					.setColor(15105570)
 					.setFooter(`ID: ${newChannel.id}`)
@@ -39,7 +39,7 @@ module.exports = class channelUpdate extends Event {
 
 			// channel topic (description) change
 			if (oldChannel.topic != newChannel.topic) {
-				embed = new MessageEmbed()
+				embed = new Embed(bot, newChannel.guild)
 					.setDescription(`**${newChannel.type === 'category' ? 'Category' : 'Channel'} topic changed of ${newChannel.toString()}**`)
 					.setColor(15105570)
 					.setFooter(`ID: ${newChannel.id}`)
@@ -66,7 +66,7 @@ module.exports = class channelUpdate extends Event {
 			}));
 
 			if (permDiff.size) {
-				embed = new MessageEmbed()
+				embed = new Embed(bot, newChannel.guild)
 					.setDescription(`**${newChannel.type === 'category' ? 'Category' : 'Channel'} permissions changed of ${newChannel.toString()}**\n*note:* check [docs](https://discordapp.com/developers/docs/topics/permissions) to see what the numbers mean`)
 					.setColor(15105570)
 					.setFooter(`ID: ${newChannel.id}`)
@@ -91,7 +91,7 @@ module.exports = class channelUpdate extends Event {
 						role = newChannel.guild.roles.cache.get(newPerm.id || oldPerm.id);
 					}
 					if (oldPerm.type == 'member' || newPerm.type == 'member') {
-						member = await newChannel.guild.fetchMember(newPerm.id || oldPerm.id);
+						member = await newChannel.guild.members.fetch(newPerm.id || oldPerm.id);
 					}
 					// make text about what changed
 					let value = '';

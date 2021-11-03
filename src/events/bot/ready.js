@@ -28,23 +28,22 @@ module.exports = class Ready extends Event {
 		// set up webserver
 		try {
 			require('../../http/api')(bot);
-			require('../../http/webhook/dbl')(bot);
 		} catch (err) {
 			console.log(err);
 		}
 
 		// webhook manager
 		setInterval(async () => {
-			await require('../../helpers/webhook-manager')(bot);
+			await require('../../helpers/webhookManager')(bot);
 		}, 10000);
 
 		// Updates the bot's status
 		setTimeout(() => {
-			bot.SetStatus('Online');
+			bot.user.setStatus('Online');
 			bot.SetActivity([`${bot.guilds.cache.size} servers!`, `${bot.users.cache.size} users!`], 'WATCHING');
 		}, 3000);
 
-
+		await require('../../scripts/update-commands.md.js')(bot);
 		// Check if any servers added the bot while offline
 		bot.guilds.cache.forEach(async item => {
 			await item.fetchGuildConfig();
@@ -89,7 +88,7 @@ module.exports = class Ready extends Event {
 		const premium = await PremiumSchema.find({});
 		for (let i = 0; i < premium.length; i++) {
 			if (premium[i].Type == 'user') {
-				const user = await bot.getUser(premium[i].ID);
+				const user = await bot.users.fetch(premium[i].ID);
 				if (user) user.premium = true;
 			} else {
 				const guild = bot.guilds.cache.get(premium[i].ID);
@@ -99,7 +98,7 @@ module.exports = class Ready extends Event {
 
 		// enable time event handler (in case of bot restart)
 		try {
-			await require('../../helpers/TimedEvents-manager')(bot);
+			await require('../../helpers/TimedEventsManager')(bot);
 		} catch (err) {
 			console.log(err);
 		}
