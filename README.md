@@ -1,4 +1,6 @@
-# The Derp Bot 3
+# I have not kept up with this project. So I am archiving it. Feel free to modify as you will!
+
+## The Derp Bot 3
 
 > This bot is an update from The Derp Bot 2.0. Currently undergoing a massive code overhaul. More To Come.
 
